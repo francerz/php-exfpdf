@@ -63,7 +63,7 @@ $pdf->CellUTF8(0, 10, 'Benjamín pidió una bebida de kiwi y fresa; Noé, sin ve
 `CellRight($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $margin=0)`
 
 Puts a cell aligned to the right margin of the page.
-Optionally $margin can be set to displace the Cell from the right margin.
+Optionally `$margin` can be set to displace the Cell from the right margin.
 
 ```php
 $pdf->CellRight(15, 5, 'Date: ', 0, 0, 'R', false, '', 30);
@@ -74,12 +74,12 @@ $pdf->CellRight(30, 5, date('Y-m-d'), 1, 1, 'C', false, '', 0);
 
 Allows to define Header and Footer using anonymous functions.
 
-* `SetHeader(callable $headerFunc, $headerHeight = null)`
+* `SetHeader(callable $headerFunc, $headerHeight = null)`  
   Sets a callable function that will execute when Header is loading.
   If parameter `$headerHeight` is null, then will be calculated and body content
   will be displaced. If is set, then content will be displaced `$headerHeight`
   plus the top margin.
-* `SetFooter(callable $footerFunc, $footerHeight = null)`
+* `SetFooter(callable $footerFunc, $footerHeight = null)`  
   Sets a callable function that will execute when Footer is loading.
   If parameter `$footerHeight` is null, then will be calculated and page break
   will executed before reaching footer content. If is set, the footer will
