@@ -1,0 +1,13 @@
+{
+    "name": "francerz/efpdf",
+    "description": "Free PDF extension library",
+    "autoload": {
+        "psr-4":{
+            "Francerz\\EFPDF\\": "src"
+        }
+    },
+    "require": {
+        "php": ">=5.4",
+        "setasign/fpdf": "^1.8"
+    }
+}
