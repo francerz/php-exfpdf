@@ -62,8 +62,8 @@ class EFPDF extends FPDF
         }
     }
 
-    const REL_PATTERN = '/^(\[\])?~(\\d+)$/';
-    const PCT_PATTERN = '/^(\[\])?(~)?([0-9]+)%$/';
+    const REL_PATTERN = '/^(\[\])?~([-+]?\\d+(?:\\.\\d+)?)$/';
+    const PCT_PATTERN = '/^(\[\])?(~)?([-+]?\\d+(?:\\.\\d+)?)%$/';
     public function CalcWidth($w)
     {
         if (preg_match(self::PCT_PATTERN, $w, $matches)) {
