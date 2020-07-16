@@ -11,6 +11,8 @@ class EFPDF extends FPDF
     private $footerHeight;
     private $headerLimit = 0;
 
+    private $xyPins = array();
+
     public function SetHeader(callable $headerFunc, $headerHeight = null)
     {
         $this->headerFunc = $headerFunc;
@@ -62,7 +64,7 @@ class EFPDF extends FPDF
 
     const REL_PATTERN = '/^~(\\d+)$/';
     const PCT_PATTERN = '/^(~)?([0-9]+)%$/';
-    protected function calcHorzSize($w)
+    protected function calcWidth($w)
     {
         if (preg_match(self::PCT_PATTERN, $w, $matches)) {
             $pw = $this->w;
@@ -73,7 +75,7 @@ class EFPDF extends FPDF
         }
         return $w;
     }
-    protected function calcVertSize($h)
+    protected function calcHeight($h)
     {
         if (preg_match(self::PCT_PATTERN, $h, $matches)) {
             $ph = $this->h;
@@ -84,24 +86,51 @@ class EFPDF extends FPDF
         }
         return $h;
     }
-    public function SetX($x)
+    protected function calcXPosition($x)
     {
         if (preg_match(self::REL_PATTERN, $x, $matches)) {
             $x = $matches[1] + $this->lMargin;
         }
-        parent::SetX($this->calcHorzSize($x));
+        return $this->calcWidth($x);
     }
-    public function SetY($y, $resetX = true)
+    protected function calcYPosition($y)
     {
         if (preg_match(self::REL_PATTERN, $y, $matches)) {
             $y = $matches[1] + $this->tMargin;
         }
-        parent::SetY($this->calcVertSize($y), $resetX);
+        return $this->calcHeight($y);
+    }
+    public function SetX($x)
+    {
+        $x = $this->calcXPosition($x);
+        parent::SetX($x);
+    }
+    public function SetY($y, $resetX = true)
+    {
+        $y = $this->calcYPosition($y);
+        parent::SetY($y, $resetX);
+    }
+    public function SetXYPin($coordName)
+    {
+        $this->xyPins[$coordName] = array('x'=>$this->x, 'y'=>$this->y);
+    }
+    public function GetXPin($coordName)
+    {
+        return $this->xyPins[$coordName]['x'];
+    }
+    public function GetYPin($coordName)
+    {
+        return $this->xyPins[$coordName]['y'];
+    }
+    public function XYPin($coordName)
+    {
+        $this->x = $this->GetXPin($coordName);
+        $this->y = $this->GetYPin($coordName);
     }
     public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
     {
-        $w = $this->calcHorzSize($w);
-        $h = $this->calcVertSize($h);
+        $w = $this->calcWidth($w);
+        $h = $this->calcHeight($h);
         parent::Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
         if ($this->InHeader) {
             $this->headerLimit = max($this->headerLimit, $this->y + $h);
@@ -114,9 +143,17 @@ class EFPDF extends FPDF
     public function CellRight($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $margin=0)
     {
         $x0 = $this->x;
-        $x = $this->calcHorzSize($w) * -1 - $this->rMargin - $margin;
+        $x = $this->calcWidth($w) * -1 - $this->rMargin - $margin;
         $this->SetX($x);
         $this->Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
         $this->x = $x0;
+    }
+    public function Image($file, $x = null, $y = null, $w = 0, $h = 0, $type = '', $link = '')
+    {
+        $x = $this->calcXPosition($x);
+        $y = $this->calcYPosition($y);
+        $w = $this->calcWidth($w);
+        $h = $this->calcHeight($h);
+        parent::Image($file, $x, $y, $w, $h, $type, $link);
     }
 }

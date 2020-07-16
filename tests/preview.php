@@ -1,5 +1,8 @@
 <?php
-require "../vendor/autoload.php";
+define('ROOT_PATH', dirname(__DIR__));
+define('FPDF_IMGPATH', ROOT_PATH.'/tests/img');
+
+require ROOT_PATH.'/vendor/autoload.php';
 
 use Francerz\EFPDF\EFPDF;
 
@@ -15,10 +18,19 @@ $pdf->SetHeader(function(EFPDF $efpdf) use ($userName) {
 $pdf->SetFooter(function(EFPDF $efpdf) {
     $efpdf->CellUTF8('~100%', 10, 'Page '.$efpdf->PageNo(), 1, 0, 'R');
 });
+
 $pdf->AddPage('P','Letter');
 
 $pdf->SetX('~0');
-$pdf->Cell('~100%', 20, 'THIS IS A HEADING', 1, 1, 'C');
+$pdf->SetXYPin('top-left');
+
+$pdf->Cell('~100%', 20, 'THIS IS A HEADING', 1, 2, 'C');
+$pdf->Image(
+    FPDF_IMGPATH.'/logo.gif',
+    $pdf->GetXPin('top-left') + 1,
+    $pdf->GetYPin('top-left')
+);
+
 $pdf->CellRight(15, 5, 'Date: ', 0, 0, 'R', false, '', 30);
 $pdf->CellRight(30, 5, date('Y-m-d'), 1, 1, 'C', false, '', 0);
 
