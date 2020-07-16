@@ -26,26 +26,50 @@ Add the repository and require to your **composer.json** file:
 Extended functionality
 ---------------------------------------
 
-### Percentual Cell Size
+### Relative Positioning and Sizing
 
-It's allowed to set Cell width and height to a percentual of page size.
-Also this applies to X and Y coordinates.
+Its allowed to use X, Y, Width and Height as percents of current page size.
 
 ```php
-// Puts pointer at 1/4 top and left of page.
-$pdf->SetXY('25%', '25%');
-// Draws Cell at page center with 50% page width and height size.
-$pdf->Cell('50%','50%', 'Center content', 1, 0, 'C');
+// Sets Y position at 25% (one quarter) from page top.
+$pdf->SetY('25%');
+// Sets X position at 25% (one quarter) from page left.
+$pdf->SetX('25%');
+
+// Draws a cell with 50% width and height of current page size.
+$pdf->Cell('50%','50%', '', 1);
 ```
 
-Sizes and positions might be calculated with margins using the `~` character
-before the numeric value.
+Also the positioning and sizing can be relative to the page content area,
+inside the margins.
 
 ```php
-// Puts pointer at left and top margin.
-$pdf->SetXY('~0', '~0');
-// Draws Cell with 100% content region width and 20 units height.
-$pdf->Cell('~100%', 20, 'THIS IS A HEADING', 1, 1, 'C');
+// Sets Y position at top margin.
+$pdf->SetY('~0');
+// Sets X position at left margin.
+$pdf->SetX('~0');
+
+// Draws a cell with 25% width and 10% height of current page content.
+$pdf->Cell('~25%', '~10%', '', 1);
+```
+
+Therefore, you can get measure calculations with methods `CalcX($x)`, `CalcY($y)`,
+`CalcWidth($w)` and `CalcHeight($h)`.
+
+### Coordinate Pinning
+
+It's posible to pin coordinates with a name.
+
+```php
+// Defines a coordinate pin at current X,Y with name 'start'.
+$pdf->SetPin('start');
+
+// Retrieves 'start' pin positions.
+$x = $pdf->GetPinX('start');
+$y = $pdf->GetPinY('start');
+
+// Moves pdf position back to pin 'start'
+$pdf->MoveToPin('start');
 ```
 
 ### Direct UTF-8 decoding text Cell
@@ -69,6 +93,9 @@ Optionally `$margin` can be set to displace the Cell from the right margin.
 $pdf->CellRight(15, 5, 'Date: ', 0, 0, 'R', false, '', 30);
 $pdf->CellRight(30, 5, date('Y-m-d'), 1, 1, 'C', false, '', 0);
 ```
+
+> **Note:**  
+> `CellRight()` uses `CellUTF8()` and text will be UTF-8 decoded.
 
 ### Header and Footer
 
@@ -101,6 +128,6 @@ $pdf->AddPage();
 
 $pdf->Output('I');
 ```
-> **Note:**
+> **Note:**  
 > It's important to invoke `SetHeader()` and `SetFooter()` before `AddPage()`.
 

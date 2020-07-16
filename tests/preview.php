@@ -22,13 +22,13 @@ $pdf->SetFooter(function(EFPDF $efpdf) {
 $pdf->AddPage('P','Letter');
 
 $pdf->SetX('~0');
-$pdf->SetXYPin('top-left');
+$pdf->SetPin('top-left');
 
 $pdf->Cell('~100%', 20, 'THIS IS A HEADING', 1, 2, 'C');
 $pdf->Image(
     FPDF_IMGPATH.'/logo.gif',
-    $pdf->GetXPin('top-left') + 1,
-    $pdf->GetYPin('top-left')
+    $pdf->GetPinX('top-left') + 1,
+    $pdf->GetPinY('top-left')
 );
 
 $pdf->CellRight(15, 5, 'Date: ', 0, 0, 'R', false, '', 30);

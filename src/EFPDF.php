@@ -62,75 +62,78 @@ class EFPDF extends FPDF
         }
     }
 
-    const REL_PATTERN = '/^~(\\d+)$/';
-    const PCT_PATTERN = '/^(~)?([0-9]+)%$/';
-    protected function calcWidth($w)
+    const REL_PATTERN = '/^(\[\])?~(\\d+)$/';
+    const PCT_PATTERN = '/^(\[\])?(~)?([0-9]+)%$/';
+    public function CalcWidth($w)
     {
         if (preg_match(self::PCT_PATTERN, $w, $matches)) {
             $pw = $this->w;
-            if ($matches[1] == '~') {
+            if ($matches[2] == '~') {
                 $pw -= $this->lMargin + $this->rMargin;
             }
-            $w = $matches[2] * $pw / 100;
+            $w = $matches[3] * $pw / 100;
         }
         return $w;
     }
-    protected function calcHeight($h)
+    public function CalcHeight($h)
     {
         if (preg_match(self::PCT_PATTERN, $h, $matches)) {
             $ph = $this->h;
-            if ($matches[1] == '~') {
+            if ($matches[2] == '~') {
                 $ph -= $this->tMargin + $this->bMargin;
             }
-            $h = $matches[2] * $ph / 100;
+            $h = $matches[3] * $ph / 100;
         }
         return $h;
     }
-    protected function calcXPosition($x)
+    public function CalcX($x)
     {
         if (preg_match(self::REL_PATTERN, $x, $matches)) {
-            $x = $matches[1] + $this->lMargin;
+            $x = $matches[2] + $this->lMargin;
         }
-        return $this->calcWidth($x);
+        return $this->CalcWidth($x);
     }
-    protected function calcYPosition($y)
+    public function CalcY($y)
     {
         if (preg_match(self::REL_PATTERN, $y, $matches)) {
-            $y = $matches[1] + $this->tMargin;
+            $y = $matches[2] + $this->tMargin;
         }
-        return $this->calcHeight($y);
+        return $this->CalcHeight($y);
     }
     public function SetX($x)
     {
-        $x = $this->calcXPosition($x);
+        $x = $this->CalcX($x);
         parent::SetX($x);
     }
     public function SetY($y, $resetX = true)
     {
-        $y = $this->calcYPosition($y);
+        $y = $this->CalcY($y);
         parent::SetY($y, $resetX);
     }
-    public function SetXYPin($coordName)
+    public function SetPin($coordName, $x = null, $y = null)
     {
-        $this->xyPins[$coordName] = array('x'=>$this->x, 'y'=>$this->y);
+        $this->xyPins[$coordName] = array(
+            'x'=> $x ?? $this->x,
+            'y'=> $y ?? $this->y
+        );
     }
-    public function GetXPin($coordName)
+    public function GetPinX($coordName)
     {
         return $this->xyPins[$coordName]['x'];
     }
-    public function GetYPin($coordName)
+    public function GetPinY($coordName)
     {
         return $this->xyPins[$coordName]['y'];
     }
-    public function XYPin($coordName)
+    public function MoveToPin($coordName)
     {
-        $this->x = $this->GetXPin($coordName);
-        $this->y = $this->GetYPin($coordName);
+        $this->x = $this->GetPinX($coordName);
+        $this->y = $this->GetPinY($coordName);
     }
     public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
     {
-        $w = $this->calcWidth($w);
-        $h = $this->calcHeight($h);
+        $w = $this->CalcWidth($w);
+        $h = $this->CalcHeight($h);
         parent::Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
         if ($this->InHeader) {
             $this->headerLimit = max($this->headerLimit, $this->y + $h);
@@ -138,22 +141,25 @@ class EFPDF extends FPDF
     }
     public function CellUTF8($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
     {
-        $this->Cell($w, $h, iconv('UTF-8','ISO-8859-1', $txt), $border, $ln, $align, $fill, $link);
+        if (is_string($txt)) {
+            $txt = iconv('UTF-8','ISO-8859-1', $txt);
+        }
+        $this->Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
     }
     public function CellRight($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $margin=0)
     {
         $x0 = $this->x;
-        $x = $this->calcWidth($w) * -1 - $this->rMargin - $margin;
+        $x = $this->CalcWidth($w) * -1 - $this->rMargin - $margin;
         $this->SetX($x);
-        $this->Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
+        $this->CellUTF8($w, $h, $txt, $border, $ln, $align, $fill, $link);
         $this->x = $x0;
     }
     public function Image($file, $x = null, $y = null, $w = 0, $h = 0, $type = '', $link = '')
     {
-        $x = $this->calcXPosition($x);
-        $y = $this->calcYPosition($y);
-        $w = $this->calcWidth($w);
-        $h = $this->calcHeight($h);
+        $x = $this->CalcX($x);
+        $y = $this->CalcY($y);
+        $w = $this->CalcWidth($w);
+        $h = $this->CalcHeight($h);
         parent::Image($file, $x, $y, $w, $h, $type, $link);
     }
 }
