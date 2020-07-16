@@ -5,6 +5,7 @@ use FPDF;
 
 class EFPDF extends FPDF
 {
+    const STYLE_NONE = '';
     const STYLE_BOLD = 'B';
     const STYLE_ITALIC = 'I';
     const STYLE_BOLD_ITALIC = 'BI';
