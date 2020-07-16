@@ -154,6 +154,19 @@ class EFPDF extends FPDF
         $this->CellUTF8($w, $h, $txt, $border, $ln, $align, $fill, $link);
         $this->x = $x0;
     }
+    public function MultiCell($w, $h, $txt, $border = 0, $align = 'J', $fill = false)
+    {
+        $w = $this->CalcWidth($w);
+        $h = $this->CalcHeight($h);
+        parent::MultiCell($w, $h, $txt, $border, $align, $fill);
+    }
+    public function MultiCellUTF8($w, $h, $txt, $border = 0, $align = 'J', $fill = false)
+    {
+        if (is_string($txt)) {
+            $txt = iconv('UTF-8','ISO-8859-1', $txt);
+        }
+        $this->MultiCell($w, $h, $txt, $border, $align, $fill);
+    }
     public function Image($file, $x = null, $y = null, $w = 0, $h = 0, $type = '', $link = '')
     {
         $x = $this->CalcX($x);
