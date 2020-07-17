@@ -70,6 +70,12 @@ $y = $pdf->GetPinY('start');
 
 // Moves pdf position back to pin 'start'
 $pdf->MoveToPin('start');
+
+// Moves pdf X position back to pin 'start'
+$pdf->MoveToPin('start','X');
+
+// Moves pdf Y position back to pin 'start'
+$pdf->MoveToPin('start','Y');
 ```
 
 ### Direct UTF-8 decoding text Cell
