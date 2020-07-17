@@ -5,10 +5,31 @@ use FPDF;
 
 class EFPDF extends FPDF
 {
+    const WIDTH_FILL = 0;
+
     const STYLE_NONE = '';
     const STYLE_BOLD = 'B';
     const STYLE_ITALIC = 'I';
     const STYLE_BOLD_ITALIC = 'BI';
+
+    const BORDER_NONE = 0;
+    const BORDER_ALL = 1;
+    const BORDER_LEFT = 'L';
+    const BORDER_RIGHT = 'R';
+    const BORDER_TOP = 'T';
+    const BORDER_BOTTOM = 'B';
+    const BORDER_SIDES = 'LR';
+    const BORDER_TOP_BOTTOM = 'TB';
+    const BORDER_LEFT_RIGHT = 'LR';
+
+    const LN_RIGHT = 0;
+    const LN_NEW_LINE = 1;
+    const LN_BELOW = 2;
+
+    const ALIGN_LEFT = 'L';
+    const ALIGN_RIGHT = 'R';
+    const ALIGN_CENTER = 'C';
+    const ALIGN_JUSTIFICATION = 'J';
 
     private $headerFunc;
     private $footerFunc;
