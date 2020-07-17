@@ -118,16 +118,22 @@ class EFPDF extends FPDF
     public function SetPin($coordName, $x = null, $y = null)
     {
         $this->xyPins[$coordName] = array(
-            'x'=> $x ?? $this->x,
-            'y'=> $y ?? $this->y
+            'x'=> isset($x) ? $this->CalcX($x) : $this->x,
+            'y'=> isset($y) ? $this->CalcY($y) : $this->y
         );
     }
     public function GetPinX($coordName)
     {
+        if (!array_key_exists($coordName, $this->xyPins)) {
+            $this->Error("Unknown Pin coordinates '{$coordName}'");
+        }
         return $this->xyPins[$coordName]['x'];
     }
     public function GetPinY($coordName)
     {
+        if (!array_key_exists($coordName, $this->xyPins)) {
+            $this->Error("Unknown Pin coordinates '{$coordName}'");
+        }
         return $this->xyPins[$coordName]['y'];
     }
     public function MoveToPin($coordName, $axis = 'XY')
