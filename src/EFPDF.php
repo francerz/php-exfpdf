@@ -130,10 +130,15 @@ class EFPDF extends FPDF
     {
         return $this->xyPins[$coordName]['y'];
     }
-    public function MoveToPin($coordName)
+    public function MoveToPin($coordName, $axis = 'XY')
     {
-        $this->x = $this->GetPinX($coordName);
-        $this->y = $this->GetPinY($coordName);
+        $axis = strtoupper($axis);
+        if (strpos($axis, 'X') !== false) {
+            $this->x = $this->GetPinX($coordName);
+        }
+        if (strpos($axis, 'Y') !== false) {
+            $this->y = $this->GetPinY($coordName);
+        }
     }
     public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
     {
