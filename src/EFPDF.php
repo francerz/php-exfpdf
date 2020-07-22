@@ -157,14 +157,21 @@ class EFPDF extends FPDF
         }
         return $this->xyPins[$coordName]['y'];
     }
-    public function MoveToPin($coordName, $axis = 'XY')
+    public function MoveToPin($coordName, $axis = 'XY', $offset = 0, $offsetY = 0)
     {
         $axis = strtoupper($axis);
+        if ($axis == 'Y') {
+            $offsetY = $this->CalcY($offset);
+            $offset = 0;
+        } else {
+            $offset = $this->CalcX($offset);
+            $offsetY = $this->CalcY($offsetY);
+        }
         if (strpos($axis, 'X') !== false) {
-            $this->x = $this->GetPinX($coordName);
+            $this->x = $this->GetPinX($coordName) + $offset;
         }
         if (strpos($axis, 'Y') !== false) {
-            $this->y = $this->GetPinY($coordName);
+            $this->y = $this->GetPinY($coordName) + $offsetY;
         }
     }
     public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')

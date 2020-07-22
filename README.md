@@ -61,6 +61,10 @@ Therefore, you can get measure calculations with methods `CalcX($x)`, `CalcY($y)
 It's posible to pin coordinates with a name.
 
 ```php
+MoveToPin($pinName, $axis = 'XY', $offset = 0, $offsetY = 0);
+```
+
+```php
 // Defines a coordinate pin at current X,Y with name 'start'.
 $pdf->SetPin('start');
 
@@ -76,11 +80,22 @@ $pdf->MoveToPin('start','X');
 
 // Moves pdf Y position back to pin 'start'
 $pdf->MoveToPin('start','Y');
+
+// Moves pdf X position back to pin 'start' and adds 10 units.
+$pdf->MoveToPin('start', 'X', 10);
+
+// Moves pdf Y position back to pin 'start' and adds 20 units.
+$pdf->ModeToPin('start', 'Y', 20);
+
+// Moves pdf position back to pin 'start' and adds X: 10 units, Y: 20 units.
+$pdf->MoveToPin('start', 'XY', 10, 20);
 ```
 
 ### Direct UTF-8 decoding text Cell
 
-`CellUTF8($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')`
+```php
+CellUTF8($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
+```
 
 Performs UTF-8 decoding strings without putting right into the code.
 
@@ -90,7 +105,9 @@ $pdf->CellUTF8(0, 10, 'Benjamín pidió una bebida de kiwi y fresa; Noé, sin ve
 
 ### Right aligned Cell
 
-`CellRight($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $margin=0)`
+```php
+CellRight($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $margin=0)
+```
 
 Puts a cell aligned to the right margin of the page.
 Optionally `$margin` can be set to displace the Cell from the right margin.
