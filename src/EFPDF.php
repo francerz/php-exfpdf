@@ -222,7 +222,7 @@ class EFPDF extends FPDF
     public function MultiCellUTF8($w, $h, $txt, $border = 0, $align = 'J', $fill = false)
     {
         if (is_string($txt)) {
-            $txt = iconv('UTF-8','ISO-8859-1', $txt);
+            $txt = iconv('UTF-8','ISO-8859-1//TRANSLIT', $txt);
         }
         $this->MultiCell($w, $h, $txt, $border, $align, $fill);
     }
