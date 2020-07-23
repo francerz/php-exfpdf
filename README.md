@@ -56,6 +56,24 @@ $pdf->Cell('~25%', '~10%', '', 1);
 Therefore, you can get measure calculations with methods `CalcX($x)`, `CalcY($y)`,
 `CalcWidth($w)` and `CalcHeight($h)`.
 
+### Offset positioning
+
+Allows to increase or decrease current position.
+
+```php
+// translates pointer 10 units right to current X.
+$pdf->OffsetX(10);
+
+// translates pointer 20 units bottom to current Y.
+$pdf->OffsetY(20);
+
+// translates equivalent to two previous in a single line.
+$pdf->OffsetXY(10, 20);
+
+// offset may be negative and relative units
+$pdf->OffsetXY(-10, '~10%');
+```
+
 ### Coordinate Pinning
 
 It's posible to pin coordinates with a name.

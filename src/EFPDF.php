@@ -174,6 +174,21 @@ class EFPDF extends FPDF
             $this->y = $this->GetPinY($coordName) + $offsetY;
         }
     }
+    public function OffsetX($offset)
+    {
+        $offset = $this->CalcX($offset);
+        $this->x += $offset;
+    }
+    public function OffsetY($offset)
+    {
+        $offset = $this->CalcY($offset);
+        $this->y += $offset;
+    }
+    public function OffsetXY($offsetX, $offsetY)
+    {
+        $this->OffsetX($offsetX);
+        $this->OffsetY($offsetY);
+    }
     public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
     {
         $w = $this->CalcWidth($w);
