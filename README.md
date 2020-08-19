@@ -181,3 +181,11 @@ $pdf->barcode128($x, $y, $w, $h, string $code);
 Using the `barcode128` puts the given `$code` ASCII string at the given `$x`
 and `$y` position. And with given `$w` (width) and `$h` (height). This measures
 are compatible with the relative positioning and sizing.
+
+```php
+$pdf->barcode39($x, $y, $w, $h, string $code);
+```
+
+Using the `barcode39` puts the given `$code` (`[-0-9A-Z. *$/+%]`) string at the
+given `$x` and `$y` position, with the given `$w` (width) and `$h` (height).
+This meaures are compatible with the relative positioning and sizing.

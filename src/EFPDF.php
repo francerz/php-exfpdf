@@ -3,6 +3,7 @@ namespace Francerz\EFPDF;
 
 use FPDF;
 use Francerz\EFPDF\Barcode\Code128;
+use Francerz\EFPDF\Barcode\Code39;
 
 class EFPDF extends FPDF
 {
@@ -254,6 +255,19 @@ class EFPDF extends FPDF
             $this->barcoders['code128'] = new Code128($this);
         }
         $barcoder = $this->barcoders['code128'];
+
+        $x = $this->CalcX($x);
+        $y = $this->CalcY($y);
+        $w = $this->CalcWidth($w);
+        $h = $this->CalcHeight($h);
+        $barcoder->Draw($x, $y, $code, $w, $h);
+    }
+    public function barcode39($x, $y, $w, $h, string $code)
+    {
+        if (!array_key_exists('code39', $this->barcoders)) {
+            $this->barcoders['code39'] = new Code39($this);
+        }
+        $barcoder = $this->barcoders['code39'];
 
         $x = $this->CalcX($x);
         $y = $this->CalcY($y);

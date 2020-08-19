@@ -43,5 +43,6 @@ $pdf->SetY('80%');
 $pdf->Cell(0, 10, '', EFPDF::BORDER_ALL);
 
 $pdf->barcode128($pdf->CalcX('~50%')-39, $pdf->CalcY('~50%')-4, 70, 8,'17194608071620010020082321509');
+$pdf->barcode39($pdf->CalcX('~50%')-39, $pdf->CalcY('~50%')+8, 70, 8,'17194608071620010020082321509');
 
 $pdf->Output('I');
