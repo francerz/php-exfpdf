@@ -2,6 +2,7 @@
 namespace Francerz\EFPDF;
 
 use FPDF;
+use Francerz\EFPDF\Barcode\Code128;
 
 class EFPDF extends FPDF
 {
@@ -234,4 +235,31 @@ class EFPDF extends FPDF
         $h = $this->CalcHeight($h);
         parent::Image($file, $x, $y, $w, $h, $type, $link);
     }
+
+    #region Barcode
+    protected $barcoders = [];
+    /**
+     * Puts an ASCII characters string with barcode format code128.
+     *
+     * @param float|string $x
+     * @param float|string $y
+     * @param float|string $w
+     * @param float|string $h
+     * @param string $code
+     * @return void
+     */
+    public function barcode128($x, $y, $w, $h, string $code)
+    {
+        if (!array_key_exists('code128', $this->barcoders)) {
+            $this->barcoders['code128'] = new Code128($this);
+        }
+        $barcoder = $this->barcoders['code128'];
+
+        $x = $this->CalcX($x);
+        $y = $this->CalcY($y);
+        $w = $this->CalcWidth($w);
+        $h = $this->CalcHeight($h);
+        $barcoder->Draw($x, $y, $code, $w, $h);
+    }
+    #endregion
 }

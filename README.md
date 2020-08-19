@@ -172,3 +172,12 @@ $pdf->Output('I');
 > **Note:**  
 > It's important to invoke `SetHeader()` and `SetFooter()` before `AddPage()`.
 
+### Barcode support
+
+```php
+$pdf->barcode128($x, $y, $w, $h, string $code);
+```
+
+Using the `barcode128` puts the given `$code` ASCII string at the given `$x`
+and `$y` position. And with given `$w` (width) and `$h` (height). This measures
+are compatible with the relative positioning and sizing.
