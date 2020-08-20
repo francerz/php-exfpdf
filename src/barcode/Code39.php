@@ -4,9 +4,9 @@ namespace Francerz\EFPDF\Barcode;
 
 class Code39
 {
-    protected \FPDF $fpdf;
+    protected $fpdf;
 
-    protected array $barChar;
+    protected $barChar;
 
     public function __construct(\FPDF $fpdf)
     {

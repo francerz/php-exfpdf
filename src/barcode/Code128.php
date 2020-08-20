@@ -14,7 +14,7 @@ namespace Francerz\EFPDF\Barcode;
 
 class Code128
 {
-    protected \FPDF $fpdf;
+    protected $fpdf;
 
     protected $T128;                                         // Tableau des codes 128
     protected $ABCset = "";                                  // jeu des caractères éligibles au C128
