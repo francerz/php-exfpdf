@@ -1,6 +1,6 @@
 <?php
 define('ROOT_PATH', dirname(__DIR__));
-define('FPDF_IMGPATH', ROOT_PATH.'/tests/img');
+define('FPDF_IMGPATH', ROOT_PATH.'/samples/img');
 
 require ROOT_PATH.'/vendor/autoload.php';
 
@@ -42,7 +42,7 @@ $pdf->Cell('50%', '50%', '', EFPDF::BORDER_ALL, EFPDF::LN_RIGHT, EFPDF::ALIGN_CE
 $pdf->SetY('80%');
 $pdf->Cell(0, 10, '', EFPDF::BORDER_ALL);
 
-$pdf->barcode128($pdf->CalcX('~50%')-39, $pdf->CalcY('~50%')-4, 70, 8,'17194608071620010020082321509');
-$pdf->barcode39($pdf->CalcX('~50%')-39, $pdf->CalcY('~50%')+8, 70, 8,'17194608071620010020082321509');
+$pdf->barcode128('17194608071620010020082321509', 70, 8, $pdf->CalcX('~50%')-39, $pdf->CalcY('~50%')-4);
+$pdf->barcode39('17194608071620010020082321509', 70, 8, $pdf->CalcX('~50%')-39, $pdf->CalcY('~50%')+8);
 
 $pdf->Output('I');
