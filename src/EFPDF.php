@@ -41,6 +41,13 @@ class EFPDF extends FPDF
 
     private $xyPins = array();
 
+    public function __construct($orientation='P', $unit='mm', $size='A4')
+    {
+        $this->x = 0.0;
+        $this->y = 0.0;
+        parent::__construct($orientation, $unit, $size);
+    }
+
     public function SetHeader(callable $headerFunc, $headerHeight = null)
     {
         $this->headerFunc = $headerFunc;
@@ -90,43 +97,95 @@ class EFPDF extends FPDF
         }
     }
 
-    const REL_PATTERN = '/^(\[\])?~([-+]?\\d+(?:\\.\\d+)?)$/';
-    const PCT_PATTERN = '/^(\[\])?(~)?([-+]?\\d+(?:\\.\\d+)?)%$/';
+    const MEASURE_PATTERN = '/^(~?)([-+]?\\d+(?:\\.\\d+)?)(%?)([-+]?)$/';
+
+    private static function MeasurePatternMatch(
+        $measure,
+        &$len=0.0,
+        &$pct=false,
+        &$rel=false,
+        &$ref=''
+    ) {
+        $match = preg_match(self::MEASURE_PATTERN, $measure, $matches);
+        if (!$match) return false;
+
+        $rel = $matches[1] === '~';
+        $len = $matches[2];
+        $pct = $matches[3] === '%';
+        $ref = $matches[4];
+
+        return $match;
+    }
+
+    private static function CalcRelativeMeasure(
+        float $value,
+        float $current,
+        float $margin,
+        bool $rel=false,
+        string $ref=''
+    ) {
+        if ($ref === '+') {
+            return $current + $value;
+        } elseif ($ref === '-') {
+            return $current - $value;
+        } elseif ($rel) {
+            return $margin + $value;
+        }
+        return $value;
+    }
+
+    private static function CalcSize(
+        float $len,
+        float $totalSize,
+        float $marginSize,
+        bool $rel = false,
+        bool $pct = false
+    ) {
+        if ($pct) {
+            $wide = $rel ? $totalSize - $marginSize : $totalSize;
+            $len = $wide * $len / 100;
+        }
+        return $len;
+    }
+
     public function CalcWidth($w)
     {
-        if (preg_match(self::PCT_PATTERN, $w, $matches)) {
-            $pw = $this->w;
-            if ($matches[2] == '~') {
-                $pw -= $this->lMargin + $this->rMargin;
-            }
-            $w = $matches[3] * $pw / 100;
+        $match = static::MeasurePatternMatch($w, $len, $pct, $rel, $ref);
+
+        if ($match) {
+            $w = static::CalcSize($len, $this->w, $this->lMargin + $this->rMargin, $rel, $pct);
         }
         return $w;
     }
     public function CalcHeight($h)
     {
-        if (preg_match(self::PCT_PATTERN, $h, $matches)) {
-            $ph = $this->h;
-            if ($matches[2] == '~') {
-                $ph -= $this->tMargin + $this->bMargin;
-            }
-            $h = $matches[3] * $ph / 100;
+        $match = static::MeasurePatternMatch($h, $len, $pct, $rel, $ref);
+
+        if ($match) {
+            $h = static::CalcSize($len, $this->h, $this->tMargin + $this->bMargin, $rel, $pct);
         }
         return $h;
     }
+
     public function CalcX($x)
     {
-        if (preg_match(self::REL_PATTERN, $x, $matches)) {
-            $x = $matches[2] + $this->lMargin;
+        $match = static::MeasurePatternMatch($x, $len, $pct, $rel, $ref);
+
+        if ($match) {
+            $x = static::CalcSize($len, $this->w, $this->lMargin + $this->rMargin, $rel, $pct);
+            $x = static::CalcRelativeMeasure($x, $this->x, $this->lMargin, $rel, $ref);
         }
-        return $this->CalcWidth($x);
+        return $x;
     }
+
     public function CalcY($y)
     {
-        if (preg_match(self::REL_PATTERN, $y, $matches)) {
-            $y = $matches[2] + $this->tMargin;
+        $match = static::MeasurePatternMatch($y, $len, $pct, $rel, $ref);
+        if ($match) {
+            $y = static::CalcSize($len, $this->h, $this->tMargin + $this->bMargin, $rel, $pct);
+            $y = static::CalcRelativeMeasure($y, $this->y, $this->tMargin, $rel, $ref);
         }
-        return $this->CalcHeight($y);
+        return $y;
     }
     public function SetX($x)
     {
@@ -249,7 +308,7 @@ class EFPDF extends FPDF
      * @param string $code
      * @return void
      */
-    public function barcode128($x, $y, $w, $h, string $code)
+    public function barcode128(string $code, $w, $h, $x = '0+', $y = '0+')
     {
         if (!array_key_exists('code128', $this->barcoders)) {
             $this->barcoders['code128'] = new Code128($this);
@@ -262,7 +321,7 @@ class EFPDF extends FPDF
         $h = $this->CalcHeight($h);
         $barcoder->Draw($x, $y, $code, $w, $h);
     }
-    public function barcode39($x, $y, $w, $h, string $code)
+    public function barcode39(string $code, $w, $h, $x = '0+', $y = '0+')
     {
         if (!array_key_exists('code39', $this->barcoders)) {
             $this->barcoders['code39'] = new Code39($this);
