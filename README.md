@@ -175,15 +175,17 @@ $pdf->Output('I');
 ### Barcode support
 
 ```php
-$pdf->barcode128($x, $y, $w, $h, string $code);
+$pdf->barcode128(string $code, $w, $h, $x = '0+', $y = '0+');
 ```
 
 Using the `barcode128` puts the given `$code` ASCII string at the given `$x`
 and `$y` position. And with given `$w` (width) and `$h` (height). This measures
 are compatible with the relative positioning and sizing.
 
+If no `$x` or `$y` is set, then will be the current PDF position.
+
 ```php
-$pdf->barcode39($x, $y, $w, $h, string $code);
+$pdf->barcode39(string $code, $w, $h, $x, $y);
 ```
 
 Using the `barcode39` puts the given `$code` (`[-0-9A-Z. *$/+%]`) string at the
