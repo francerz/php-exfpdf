@@ -6,6 +6,9 @@
             "Francerz\\EFPDF\\": "src"
         }
     },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
     "require": {
         "php": ">=5.4",
         "setasign/fpdf": "^1.8"
