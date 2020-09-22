@@ -1,7 +1,7 @@
 {
     "name": "francerz/efpdf",
     "description": "Free PDF extension library",
-    "version": "1.0",
+    "version": "1.202009.0",
     "autoload": {
         "psr-4":{
             "Francerz\\EFPDF\\": "src"
