@@ -1,6 +1,8 @@
 EFPDF (Extended Free PDF)
 =======================================
 
+[![Packagist](https://img.shields.io/packagist/vpre/francerz/efpdf)](https://packagist.org/packages/francerz/efpdf)
+
 This library extends basic functionality of the FPDF class.
 
 FPDF is a PHP class which allows to generate PDF files with pure PHP.
