@@ -2,6 +2,7 @@ EFPDF (Extended Free PDF)
 =======================================
 
 [![Packagist](https://img.shields.io/packagist/vpre/francerz/efpdf)](https://packagist.org/packages/francerz/efpdf)
+[![Build Status](https://github.com/francerz/efpdf/workflows/PHP%20Composer/badge.svg?branch=master)](https://github.com/francerz/EFPDF/actions?query=workflow%3A%22PHP+Composer%22+branch%3Amaster)
 
 This library extends basic functionality of the FPDF class.
 
