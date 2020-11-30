@@ -1,0 +1,9 @@
+/composer.lock      export-ignore
+/samples            export-ignore
+/tests              export-ignore
+/phpunit.xml        export-ignore
+
+/.gitattributes     export-ignore
+/.github            export-ignore
+/.gitignore         export-ignore
+/.vscode            export-ignore
