@@ -326,13 +326,13 @@ class EFPDF extends FPDF
     {
         switch ($ln) {
             case static::LN_RIGHT:
-                parent::SetX($x + $w);
+                $this->x = $x + $w;
                 break;
             case static::LN_BELOW:
-                parent::SetY($y + $h);
+                $this->y = $y + $h;
                 break;
             case static::LN_NEW_LINE:
-                parent::SetX($x + $w);
+                $this->x = $x + $w;
                 $this->Ln();
                 break;
         }
