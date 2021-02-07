@@ -39,6 +39,8 @@ class EFPDF extends FPDF
     private $footerHeight;
     private $headerLimit = 0;
 
+    private $srcEncoding = null;
+
     private $xyPins = array();
 
     public function __construct($orientation='P', $unit='mm', $size='A4')
@@ -81,6 +83,7 @@ class EFPDF extends FPDF
         $footerFunc = $this->footerFunc;
         $footerFunc($this);
     }
+
     public function GetHeaderBottom()
     {
         if (isset($this->headerHeight)) {
@@ -95,6 +98,11 @@ class EFPDF extends FPDF
         if (isset($this->headerFunc)) {
             $this->SetY($this->GetHeaderBottom());
         }
+    }
+
+    public function setSourceEncoding($encoding)
+    {
+        $this->srcEncoding = $encoding;
     }
 
     const MEASURE_PATTERN = '/^(~?)([-+]?\\d+(?:\\.\\d+)?)(%?)([-+]?)$/';
@@ -252,6 +260,9 @@ class EFPDF extends FPDF
     }
     public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
     {
+        if (isset($this->srcEncoding) && is_string($txt)) {
+            $txt = iconv($this->srcEncoding, 'ISO-8859-1//TRANSLIT', $txt);
+        }
         $w = $this->CalcWidth($w);
         $h = $this->CalcHeight($h);
         parent::Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
@@ -259,6 +270,9 @@ class EFPDF extends FPDF
             $this->headerLimit = max($this->headerLimit, $this->y + $h);
         }
     }
+    /**
+     * @deprecated 1.0.2 This method is deprecated in favor of SetSourceEncoding
+     */
     public function CellUTF8($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
     {
         if (is_string($txt)) {
@@ -266,20 +280,28 @@ class EFPDF extends FPDF
         }
         $this->Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
     }
+
     public function CellRight($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $margin=0)
     {
         $x0 = $this->x;
         $x = $this->CalcWidth($w) * -1 - $this->rMargin - $margin;
         $this->SetX($x);
-        $this->CellUTF8($w, $h, $txt, $border, $ln, $align, $fill, $link);
+        $this->Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
         $this->x = $x0;
     }
+
     public function MultiCell($w, $h, $txt, $border = 0, $align = 'J', $fill = false)
     {
+        if (isset($this->srcEncoding) && is_string($txt)) {
+            $txt = iconv($this->srcEncoding, 'ISO-8859-1//TRANSLIT', $txt);
+        }
         $w = $this->CalcWidth($w);
         $h = $this->CalcHeight($h);
         parent::MultiCell($w, $h, $txt, $border, $align, $fill);
     }
+    /**
+     * @deprecated 1.0.2 This method is deprecated in favor of SetSourceEncoding
+     */
     public function MultiCellUTF8($w, $h, $txt, $border = 0, $align = 'J', $fill = false)
     {
         if (is_string($txt)) {
@@ -287,6 +309,7 @@ class EFPDF extends FPDF
         }
         $this->MultiCell($w, $h, $txt, $border, $align, $fill);
     }
+
     public function Image($file, $x = null, $y = null, $w = 0, $h = 0, $type = '', $link = '')
     {
         $x = $this->CalcX($x);
@@ -298,6 +321,23 @@ class EFPDF extends FPDF
 
     #region Barcode
     protected $barcoders = [];
+
+    private function lnHandling($ln, $x, $y, $w, $h)
+    {
+        switch ($ln) {
+            case static::LN_RIGHT:
+                parent::SetX($x + $w);
+                break;
+            case static::LN_BELOW:
+                parent::SetY($y + $h);
+                break;
+            case static::LN_NEW_LINE:
+                parent::SetX($x + $w);
+                $this->Ln();
+                break;
+        }
+    }
+
     /**
      * Puts an ASCII characters string with barcode format code128.
      *
@@ -308,7 +348,7 @@ class EFPDF extends FPDF
      * @param string $code
      * @return void
      */
-    public function barcode128(string $code, $w, $h, $x = '0+', $y = '0+')
+    public function Barcode128(string $code, $w, $h, $x = '0+', $y = '0+', $ln = EFPDF::LN_RIGHT)
     {
         if (!array_key_exists('code128', $this->barcoders)) {
             $this->barcoders['code128'] = new Code128($this);
@@ -320,8 +360,10 @@ class EFPDF extends FPDF
         $w = $this->CalcWidth($w);
         $h = $this->CalcHeight($h);
         $barcoder->Draw($x, $y, $code, $w, $h);
+        $this->lnHandling($ln, $x, $y, $w, $h);
     }
-    public function barcode39(string $code, $w, $h, $x = '0+', $y = '0+')
+
+    public function Barcode39(string $code, $w, $h, $x = '0+', $y = '0+', $ln = EFPDF::LN_RIGHT)
     {
         if (!array_key_exists('code39', $this->barcoders)) {
             $this->barcoders['code39'] = new Code39($this);
@@ -333,6 +375,7 @@ class EFPDF extends FPDF
         $w = $this->CalcWidth($w);
         $h = $this->CalcHeight($h);
         $barcoder->Draw($x, $y, $code, $w, $h);
+        $this->lnHandling($ln, $x, $y, $w, $h);
     }
     #endregion
 }
