@@ -298,9 +298,6 @@ class EFPDF extends FPDF
 
     public function MultiCell($w, $h, $txt, $border = 0, $align = 'J', $fill = false)
     {
-        if (isset($this->srcEncoding) && is_string($txt)) {
-            $txt = iconv($this->srcEncoding, 'ISO-8859-1//TRANSLIT', $txt);
-        }
         $w = $this->CalcWidth($w);
         $h = $this->CalcHeight($h);
         parent::MultiCell($w, $h, $txt, $border, $align, $fill);
