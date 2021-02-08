@@ -328,6 +328,15 @@ class EFPDF extends FPDF
         parent::Image($file, $x, $y, $w, $h, $type, $link);
     }
 
+    public function Rect($x, $y, $w, $h, $style = '')
+    {
+        $x = $this->CalcX($x);
+        $y = $this->CalcY($y);
+        $w = $this->CalcWidth($w);
+        $h = $this->CalcHeight($h);
+        parent::Rect($x, $y, $w, $h, $style);
+    }
+
     #region Barcode
     protected $barcoders = [];
 
