@@ -290,6 +290,12 @@ class EFPDF extends FPDF
         $this->x = $x0;
     }
 
+    public function TextBlock($txt, $align = '')
+    {
+        $this->MultiCell('~100%', $this->k, $txt, 0, $align, false);
+        $this->SetX('~0');
+    }
+
     public function MultiCell($w, $h, $txt, $border = 0, $align = 'J', $fill = false)
     {
         if (isset($this->srcEncoding) && is_string($txt)) {
