@@ -292,7 +292,7 @@ class EFPDF extends FPDF
 
     public function TextBlock($txt, $align = '')
     {
-        $this->MultiCell('~100%', $this->k, $txt, 0, $align, false);
+        $this->MultiCell('~100%', $this->FontSize, $txt, 0, $align, false);
         $this->SetX('~0');
     }
 
