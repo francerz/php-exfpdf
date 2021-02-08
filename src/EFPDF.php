@@ -40,6 +40,7 @@ class EFPDF extends FPDF
     private $headerLimit = 0;
 
     private $srcEncoding = null;
+    private $lineHeight = 1.0;
 
     private $xyPins = array();
 
@@ -103,6 +104,11 @@ class EFPDF extends FPDF
     public function setSourceEncoding($encoding)
     {
         $this->srcEncoding = $encoding;
+    }
+
+    public function setLineHeight($lineHeight)
+    {
+        $this->lineHeight = $lineHeight;
     }
 
     const MEASURE_PATTERN = '/^(~?)([-+]?\\d+(?:\\.\\d+)?)(%?)([-+]?)$/';
@@ -292,7 +298,7 @@ class EFPDF extends FPDF
 
     public function TextBlock($txt, $align = '')
     {
-        $this->MultiCell('~100%', $this->FontSize, $txt, 0, $align, false);
+        $this->MultiCell('~100%', $this->FontSize * $this->lineHeight, $txt, 0, $align, false);
         $this->SetX('~0');
     }
 
