@@ -328,6 +328,15 @@ class EFPDF extends FPDF
         parent::Image($file, $x, $y, $w, $h, $type, $link);
     }
 
+    public function Line($x1, $y1, $x2, $y2)
+    {
+        $x1 = $this->CalcX($x1);
+        $x2 = $this->CalcX($x2);
+        $y1 = $this->CalcY($y1);
+        $y2 = $this->CalcY($y2);
+        parent::Line($x1, $y1, $x2, $y2);
+    }
+    
     public function Rect($x, $y, $w, $h, $style = '')
     {
         $x = $this->CalcX($x);
