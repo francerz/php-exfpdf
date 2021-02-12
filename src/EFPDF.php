@@ -269,6 +269,9 @@ class EFPDF extends FPDF
         if (isset($this->srcEncoding) && is_string($txt)) {
             $txt = iconv($this->srcEncoding, 'ISO-8859-1//TRANSLIT', $txt);
         }
+        if (is_null($h)) {
+            $h = $this->FontSize * $this->lineHeight;
+        }
         $w = $this->CalcWidth($w);
         $h = $this->CalcHeight($h);
         parent::Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
