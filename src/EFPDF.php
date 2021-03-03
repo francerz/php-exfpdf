@@ -111,6 +111,11 @@ class EFPDF extends FPDF
         $this->lineHeight = $lineHeight;
     }
 
+    public function setFontStyle($style)
+    {
+        $this->setFont($this->FontFamily, $style, $this->FontSizePt);
+    }
+
     const MEASURE_PATTERN = '/^(~?)([-+]?\\d+(?:\\.\\d+)?)(%?)([-+]?)$/';
 
     private static function MeasurePatternMatch(
