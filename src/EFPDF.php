@@ -101,17 +101,17 @@ class EFPDF extends FPDF
         }
     }
 
-    public function setSourceEncoding($encoding)
+    public function SetSourceEncoding($encoding)
     {
         $this->srcEncoding = $encoding;
     }
 
-    public function setLineHeight($lineHeight)
+    public function SetLineHeight($lineHeight)
     {
         $this->lineHeight = $lineHeight;
     }
 
-    public function setFontStyle($style)
+    public function SetFontStyle($style)
     {
         $this->setFont($this->FontFamily, $style, $this->FontSizePt);
     }
@@ -289,7 +289,7 @@ class EFPDF extends FPDF
      */
     public function CellUTF8($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
     {
-        if (is_string($txt)) {
+        if (!isset($this->srcEncoding) && is_string($txt)) {
             $txt = iconv('UTF-8','ISO-8859-1//TRANSLIT', $txt);
         }
         $this->Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
@@ -321,7 +321,7 @@ class EFPDF extends FPDF
      */
     public function MultiCellUTF8($w, $h, $txt, $border = 0, $align = 'J', $fill = false)
     {
-        if (is_string($txt)) {
+        if (!isset($this->srcEncoding) && is_string($txt)) {
             $txt = iconv('UTF-8','ISO-8859-1//TRANSLIT', $txt);
         }
         $this->MultiCell($w, $h, $txt, $border, $align, $fill);
