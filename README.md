@@ -10,24 +10,88 @@ FPDF is a PHP class which allows to generate PDF files with pure PHP.
 F from FPDF stands for Free: you may use it for any kind of usage and modify it
 to suit your needs.
 
-Installation with Composer
+Installation
 ---------------------------------------
 
-Add the repository and require to your **composer.json** file:
-```json
-    {
-        "repositories": [{
-            "type":"vcs",
-            "url":"https://github.com/francerz/EFPDF"
-        }],
-        "require": {
-            "francerz/efpdf": "master"
-        }
-    }
+The easiest and optimal way to install EFPDF is by using [Composer](https://getcomposer.org).
+
+If you already using Composer, just run the next command and will be fully
+installed.
+
+```bash
+composer require francerz/EFPDF
 ```
 
 Extended functionality
 ---------------------------------------
+
+### Output result as PSR-7 ResponseInterface
+
+The EFPDF allows to output resultant PDF to PSR-7 compliant ResponseInterface
+object. Relies on PSR-17 Http Factories to create the instances.
+
+```php
+OutputPsr7(
+  \Psr\Http\Message\ResponseFactoryInterface $responseFactory,
+  \Psr\Http\Messsage\StreamFactoryInterface $streamFactory,
+  string $filename,
+  bool $inline = true,
+  bool $isUTF8 = false
+)
+```
+
+Usage example
+```php
+$pdf = new EFPDF();
+// ... create PDF
+
+// ... load HTTP Factories
+$responseFactory = new ResponseFactory(); // from a PSR-17 compliant library
+$streamFactory = new StreamFactory(); // from a PSR-17 compliant library
+
+// Output PSR-7 file
+$response = $pdf->OutputPsr7($responseFactory, $streamFactory, 'my-file.pdf');
+```
+
+#### Alternative simplified method `OutputPsr7WithManager`
+
+Alternatively you can use HttpFactoryManager to handle multiple factories
+instances to reduce parameters, improving reusability.
+
+```php
+OutputPsr7WithManager(
+  \Francerz\Http\Utils\HttpFactoryManager $hfm,
+  string $filename,
+  bool $inline = true,
+  bool $isUTF8 = false
+)
+```
+
+Usage example
+```php
+$pdf = new EFPDF();
+// ... create PDF
+
+// Output PSR-7 Response object
+$factories = new HttpFactoryManager(new ResponseFactory(), new StreamFactory());
+$response = $pdf->OutputPsr7WithManager($factories, 'my-file.pdf');
+```
+
+##### Even simplier with in-home HTTP library
+
+In the following example is used the simplified version with in-home HTTP
+library [francerz/http](https://packagist.org/packages/francerz/http) wich
+is PSR-7, PSR-17 and PSR-18 compliant.
+
+```php
+$pdf = new EFPDF();
+// ... create PDF
+
+// Output PSR-7 Response object
+$response = $pdf->OutputPsr7WithManager(HttpFactory::getManager(), 'my-file.pdf');
+```
+
+
 
 ### Relative Positioning and Sizing
 
@@ -112,16 +176,32 @@ $pdf->ModeToPin('start', 'Y', 20);
 $pdf->MoveToPin('start', 'XY', 10, 20);
 ```
 
-### Direct UTF-8 decoding text Cell
+### Relative Cell Height based on Font Size
 
 ```php
-CellUTF8($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
+SetLineHeight(float $size)
 ```
 
-Performs UTF-8 decoding strings without putting right into the code.
+Define automatic line height size based on current Font Size.
 
 ```php
-$pdf->CellUTF8(0, 10, 'Benjamín pidió una bebida de kiwi y fresa; Noé, sin vergüenza, la más exquisita champaña del menú.');
+$pdf->SetFontSize(10);
+$pdf->SetLineHeight(1.1); // 110% of actual size (11pt)
+
+$pdf->Cell('100%', null, 'This text is size 10pt, but Cell is 11pt height with LineHeight 1.1');
+```
+
+### Simplified content encoding
+
+```php
+SetSourceEncoding(string $encoding)
+```
+
+Allows internal decoding strings without writing on each cell.
+
+```php
+$pdf->SetSourceEncoding('UTF-8');
+$pdf->Cell('100%', null, 'Benjamín pidió una bebida de kiwi y fresa; Noé, sin vergüenza, la más exquisita champaña del menú.');
 ```
 
 ### Right aligned Cell
@@ -137,9 +217,6 @@ Optionally `$margin` can be set to displace the Cell from the right margin.
 $pdf->CellRight(15, 5, 'Date: ', 0, 0, 'R', false, '', 30);
 $pdf->CellRight(30, 5, date('Y-m-d'), 1, 1, 'C', false, '', 0);
 ```
-
-> **Note:**  
-> `CellRight()` uses `CellUTF8()` and text will be UTF-8 decoded.
 
 ### Header and Footer
 

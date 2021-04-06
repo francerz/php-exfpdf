@@ -4,6 +4,9 @@ namespace Francerz\EFPDF;
 use FPDF;
 use Francerz\EFPDF\Barcode\Code128;
 use Francerz\EFPDF\Barcode\Code39;
+use Francerz\Http\Utils\HttpFactoryManager;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 class EFPDF extends FPDF
 {
@@ -264,11 +267,26 @@ class EFPDF extends FPDF
         $offset = $this->CalcY($offset);
         $this->y += $offset;
     }
+
     public function OffsetXY($offsetX, $offsetY)
     {
         $this->OffsetX($offsetX);
         $this->OffsetY($offsetY);
     }
+
+    /**
+     * Adds a Text Cell on current position
+     *
+     * @param integer $w Cell width
+     * @param integer $h Cell height (leave it null for autodetection based on line height).
+     * @param string $txt Cell text content
+     * @param integer $border Border width (1=ALL, 0=NONE, T=Top, B=Bottom, L=Left, R=Right)
+     * @param integer $ln Line break (0=Right, 1=New Line, 2=Below)
+     * @param string $align Text alignment (L=Left, R=Right, C=Center, J=Justified)
+     * @param boolean $fill Cell will be filled with Fill Color
+     * @param string $link Hyperlink for clickable cell
+     * @return void
+     */
     public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
     {
         if (isset($this->srcEncoding) && is_string($txt)) {
@@ -310,8 +328,22 @@ class EFPDF extends FPDF
         $this->SetX('~0');
     }
 
+    /**
+     * Adds a Multiline cell in current position
+     *
+     * @param integer $w Cell Width
+     * @param integer $h Cell Height (null=Automatic height based on line height)
+     * @param string $txt Cell text content
+     * @param integer $border Cell border (1=All, 0=None, T=Top, L=Left, B=Bottom, R=Right)
+     * @param string $align Text content alignment (L=Left, R=Right, C=Center, J=Justify)
+     * @param boolean $fill Cell must be filled with Fill Color
+     * @return void
+     */
     public function MultiCell($w, $h, $txt, $border = 0, $align = 'J', $fill = false)
     {
+        if (is_null($h)) {
+            $h = $this->FontSize * $this->lineHeight;
+        }
         $w = $this->CalcWidth($w);
         $h = $this->CalcHeight($h);
         parent::MultiCell($w, $h, $txt, $border, $align, $fill);
@@ -414,4 +446,29 @@ class EFPDF extends FPDF
         $this->lnHandling($ln, $x, $y, $w, $h);
     }
     #endregion
+
+    public function OutputPsr7(
+        ResponseFactoryInterface $responseFactory,
+        StreamFactoryInterface $streamFactory,
+        $name,
+        $inline = true,
+        $isUTF8 = false
+    ) {
+        $this->Close();
+
+        $filename = $this->_httpencode('filename', $name, $isUTF8);
+        $disposition = $inline ? 'inline' : 'attachment';
+
+        return $responseFactory->createResponse()
+            ->withHeader('Content-Type', 'application/pdf')
+            ->withHeader('Content-Disposition', "{$disposition}; $filename")
+            ->withHeader('Cache-Control', ['private','max-age=0','must-revalidate'])
+            ->withHeader('Pragma', 'public')
+            ->withBody($streamFactory->createStream($this->buffer));
+    }
+
+    public function OutputPsr7WithManager(HttpFactoryManager $hfm, $name, $inline = true, $isUTF8 = false)
+    {
+        return $this->OutputPsr7($hfm->getResponseFactory(), $hfm->getStreamFactory(), $name, $inline, $isUTF8);
+    }
 }

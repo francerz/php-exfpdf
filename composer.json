@@ -1,6 +1,7 @@
 {
     "name": "francerz/efpdf",
     "description": "Free PDF extension library",
+    "keywords": ["PDF","PSR-7","Http-Message","Barcode"],
     "autoload": {
         "psr-4":{
             "Francerz\\EFPDF\\": "src"
@@ -11,9 +12,11 @@
     },
     "require": {
         "php": ">=5.4",
-        "setasign/fpdf": "^1.8"
+        "setasign/fpdf": "^1.8",
+        "francerz/http-utils": "^0.2.19"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.3"
+        "phpunit/phpunit": "^8.5",
+        "francerz/http": "^0.2.9"
     }
 }
