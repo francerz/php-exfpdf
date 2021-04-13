@@ -170,7 +170,7 @@ $pdf->MoveToPin('start','Y');
 $pdf->MoveToPin('start', 'X', 10);
 
 // Moves pdf Y position back to pin 'start' and adds 20 units.
-$pdf->ModeToPin('start', 'Y', 20);
+$pdf->MoveToPin('start', 'Y', 20);
 
 // Moves pdf position back to pin 'start' and adds X: 10 units, Y: 20 units.
 $pdf->MoveToPin('start', 'XY', 10, 20);
@@ -209,6 +209,7 @@ $pdf->Cell('100%', null, 'Benjamín pidió una bebida de kiwi y fresa; Noé, sin
 ```php
 CellRight($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $margin=0)
 ```
+
 
 Puts a cell aligned to the right margin of the page.
 Optionally `$margin` can be set to displace the Cell from the right margin.
@@ -251,6 +252,57 @@ $pdf->Output('I');
 ```
 > **Note:**  
 > It's important to invoke `SetHeader()` and `SetFooter()` before `AddPage()`.
+
+### Tables
+
+Table PDF creation is simplified and with automatic overflowing when
+cells overflows in multiple pages.
+
+```php
+$pdf = new EFPDF();
+$pdf->AddPage();
+$pdf->SetFont('Arial', '', 12);
+
+// Creates table with three columns with given widths
+$table = $pdf->CreateTable(['~25%','~60%','~15%']);
+
+// Sets Line Height as its used to extend cell size.
+$pdf->SetLineHeight(1.2);
+
+// Set header styling
+$pdf->SetFont('','B', 14);
+$pdf->SetFillColor('#CA4A0F');
+$pdf->SetTextColor('#FFF');
+
+// Creates a row with heading
+$row = $table->AddRow();
+$row->Cell('Price', $align='C', $fill=true, $colspan=1, $rowspan=2);  // 2 rows tall
+$row->Cell('Product', $align='C', $fill=true, $colspan=2);            // 2 colums wide
+$row = $table->AddRow();
+$row->CellSpan($fill=true); // $rowspan still not supported this is placeholder
+$row->Cell('Description', $align='C', $fill=true);
+$row->Cell('Quantity', $align='C', $fill=true);
+
+// Creates content rows
+$pdf->SetFont('', '', 12);
+$pdf->SetTextColor('#000');
+
+$row = $table->AddRow();
+$row->Cell('$ 340.00', $align='R');
+$row->Cell('Gymbal');
+$row->Cell('3', 'C');
+$row = $table->AddRow();
+$row->Cell('$ 970.00', $align='R');
+$row->Cell('Laptop');
+$row->Cell('1', 'C');
+$row = $table->AddRow();
+$row->Cell('$ 120.00', $align='R');
+$row->Cell('Headphones');
+$row->Cell('2', 'C');
+
+// Draws all borders in table
+$table->DrawBorders();
+```
 
 ### Barcode support
 

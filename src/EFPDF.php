@@ -4,6 +4,7 @@ namespace Francerz\EFPDF;
 use FPDF;
 use Francerz\EFPDF\Barcode\Code128;
 use Francerz\EFPDF\Barcode\Code39;
+use Francerz\EFPDF\Table\Table;
 use Francerz\Http\Utils\HttpFactoryManager;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -95,6 +96,22 @@ class EFPDF extends FPDF
         }
         return $this->headerLimit;
     }
+
+    public function GetMarginTop()
+    {
+        return $this->tMargin;
+    }
+
+    public function GetMarginBottom()
+    {
+        return $this->bMargin;
+    }
+
+    public function GetBottom()
+    {
+        return $this->h - $this->bMargin;
+    }
+
     public function AddPage($orientation = '', $size = '', $rotation = 0)
     {
         $this->headerLimit = 0;
@@ -272,6 +289,45 @@ class EFPDF extends FPDF
     {
         $this->OffsetX($offsetX);
         $this->OffsetY($offsetY);
+    }
+
+    private function hex2rgb($hexStr, &$r, &$g, &$b)
+    {
+        $hexStr = preg_replace('/[^0-9A-Fa-f]/', '', $r);
+        if (strlen($hexStr) == 6) {
+            $colorVal = hexdec($hexStr);
+            $r = 0xFF & ($colorVal >> 0x10);
+            $g = 0xFF & ($colorVal >> 0x8);
+            $b = 0xFF & $colorVal;
+        } elseif (strlen($hexStr) == 3) {
+            $r = hexdec(str_repeat(substr($hexStr, 0, 1), 2));
+            $g = hexdec(str_repeat(substr($hexStr, 1, 1), 2));
+            $b = hexdec(str_repeat(substr($hexStr, 2, 1), 2));
+        }
+    }
+
+    public function SetFillColor($r, $g = null, $b = null)
+    {
+        if (is_string($r)) {
+            $this->hex2rgb($r, $r, $g, $b);
+        }
+        parent::SetFillColor($r, $g, $b);
+    }
+
+    public function SetTextColor($r, $g = null, $b = null)
+    {
+        if (is_string($r)) {
+            $this->hex2rgb($r, $r, $g, $b);
+        }
+        parent::SetTextColor($r, $g, $b);
+    }
+
+    public function SetDrawColor($r, $g = null, $b = null)
+    {
+        if (is_string($r)) {
+            $this->hex2rgb($r, $r, $g, $b);
+        }
+        parent::SetDrawColor($r, $g, $b);
     }
 
     /**
@@ -470,5 +526,28 @@ class EFPDF extends FPDF
     public function OutputPsr7WithManager(HttpFactoryManager $hfm, $name, $inline = true, $isUTF8 = false)
     {
         return $this->OutputPsr7($hfm->getResponseFactory(), $hfm->getStreamFactory(), $name, $inline, $isUTF8);
+    }
+
+    public function SetPage($page)
+    {
+        $this->page = $page;
+    }
+
+    public function GetPage()
+    {
+        return $this->page;
+    }
+
+    public function CreateTable($widths)
+    {
+        $table = new Table($this, $widths);
+        return $table;
+    }
+
+    protected function _beginpage($orientation, $size, $rotation)
+    {
+        $page = array_key_exists($this->page+1, $this->pages) ? $this->pages[$this->page+1] : '';
+        parent::_beginpage($orientation, $size, $rotation);
+        $this->pages[$this->page] = $page;
     }
 }
