@@ -71,12 +71,39 @@ class EFPDF extends FPDF
         }
     }
 
+    public function BackStyles(&$family, &$style, &$fontsize, &$lw, &$dc, &$fc, &$tc, &$cf)
+    {
+        $family = $this->FontFamily;
+        $style = $this->FontStyle.($this->underline ? 'U' : '');
+        $fontsize = $this->FontSizePt;
+        $lw = $this->LineWidth;
+        $dc = $this->DrawColor;
+        $fc = $this->FillColor;
+        $tc = $this->TextColor;
+        $cf = $this->ColorFlag;
+    }
+
+    public function RestoreStyles($family, $style, $fontsize, $lw, $dc, $fc, $tc, $cf)
+    {
+        $this->SetFont($family, $style, $fontsize);
+        $this->DrawColor = $dc;
+        $this->_out($dc);
+        $this->FillColor = $fc;
+        $this->_out($fc);
+        $this->TextColor = $tc;
+        $this->ColorFlag = $cf;
+        $this->LineWidth = $lw;
+        $this->_out(sprintf('%.2F w', $lw * $this->k));
+    }
+
     public function Header()
     {
-        if (isset($this->headerFunc)) {
-            $headerFunc = $this->headerFunc;
-            $headerFunc($this);
+        if (!isset($this->headerFunc)) {
+            return;
         }
+        $this->BackStyles($family, $style, $fontsize, $lw, $dc, $fc, $tc, $cf);
+        call_user_func($this->headerFunc, $this);
+        $this->RestoreStyles($family, $style, $fontsize, $lw, $dc, $fc, $tc, $cf);
     }
     
     public function Footer()
@@ -89,9 +116,9 @@ class EFPDF extends FPDF
         } else {
             $this->SetY($this->bMargin * -1);
         }
-
-        $footerFunc = $this->footerFunc;
-        $footerFunc($this);
+        $this->BackStyles($family, $style, $fontsize, $lw, $dc, $fc, $tc, $cf);
+        call_user_func($this->footerFunc, $this);
+        $this->RestoreStyles($family, $style, $fontsize, $lw, $dc, $fc, $tc, $cf);
     }
 
     public function GetHeaderBottom()

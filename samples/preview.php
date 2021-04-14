@@ -13,10 +13,13 @@ $pdf->AliasNbPages();
 $pdf->SetSourceEncoding('UTF-8');
 $pdf->SetFont('Arial', EFPDF::STYLE_NONE, 12);
 $pdf->SetHeader(function(EFPDF $efpdf) use ($userName) {
+    $efpdf->SetTextColor('#0000FF');
     $efpdf->SetFont('Arial', EFPDF::STYLE_BOLD, 16);
     $efpdf->Cell('~100%', 10, "Hello {$userName}!", EFPDF::BORDER_NONE);
 });
 $pdf->SetFooter(function(EFPDF $efpdf) {
+    $efpdf->SetTextColor('#FF0000');
+    $efpdf->SetFont('', 'B', 10);
     $efpdf->Cell('~100%', 10, 'Page '.$efpdf->PageNo(), EFPDF::BORDER_NONE, EFPDF::LN_NEW_LINE, EFPDF::ALIGN_RIGHT);
     $efpdf->Cell('~100%', 10, 'Company name', EFPDF::BORDER_NONE, EFPDF::LN_NEW_LINE, EFPDF::ALIGN_CENTER);
 }, 30);
