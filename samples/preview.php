@@ -14,11 +14,12 @@ $pdf->SetSourceEncoding('UTF-8');
 $pdf->SetFont('Arial', EFPDF::STYLE_NONE, 12);
 $pdf->SetHeader(function(EFPDF $efpdf) use ($userName) {
     $efpdf->SetFont('Arial', EFPDF::STYLE_BOLD, 16);
-    $efpdf->Cell('~100%', 10, "Hello {$userName}!", EFPDF::BORDER_ALL);
+    $efpdf->Cell('~100%', 10, "Hello {$userName}!", EFPDF::BORDER_NONE);
 });
 $pdf->SetFooter(function(EFPDF $efpdf) {
-    $efpdf->Cell('~100%', 10, 'Page '.$efpdf->PageNo(), EFPDF::BORDER_ALL, EFPDF::LN_RIGHT, EFPDF::ALIGN_RIGHT);
-});
+    $efpdf->Cell('~100%', 10, 'Page '.$efpdf->PageNo(), EFPDF::BORDER_NONE, EFPDF::LN_NEW_LINE, EFPDF::ALIGN_RIGHT);
+    $efpdf->Cell('~100%', 10, 'Company name', EFPDF::BORDER_NONE, EFPDF::LN_NEW_LINE, EFPDF::ALIGN_CENTER);
+}, 30);
 
 $pdf->AddPage('P','Letter');
 

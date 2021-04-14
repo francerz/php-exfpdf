@@ -42,8 +42,10 @@ class EFPDF extends FPDF
     private $headerHeight;
     private $footerHeight;
     private $headerLimit = 0;
+    private $footerLimit = null;
 
     private $srcEncoding = null;
+    private $pdfEncoding = 'ISO-8859-1//TRANSLIT';
     private $lineHeight = 1.0;
 
     private $xyPins = array();
@@ -55,15 +57,15 @@ class EFPDF extends FPDF
         parent::__construct($orientation, $unit, $size);
     }
 
-    public function SetHeader(callable $headerFunc, $headerHeight = null)
+    public function SetHeader(?callable $headerFunc, $headerHeight = null)
     {
         $this->headerFunc = $headerFunc;
         $this->headerHeight = $headerHeight;
     }
-    public function SetFooter(callable $footerFunc, $footerHeight = null)
+    public function SetFooter(?callable $footerFunc, $footerHeight = null)
     {
         $this->footerFunc = $footerFunc;
-        $this->footerHeight = $footerHeight;
+        $this->footerHeight = $this->bMargin = $footerHeight;
     }
 
     public function Header()
@@ -95,6 +97,16 @@ class EFPDF extends FPDF
             return $this->tMargin + $this->headerHeight;
         }
         return $this->headerLimit;
+    }
+    public function GetFooterTop()
+    {
+        if (isset($this->footerHeight)) {
+            return $this->h - $this->footerHeight;
+        }
+        if (isset($this->footerLimit)) {
+            return $this->footerLimit;
+        }
+        return $this->h - $this->bMargin;
     }
 
     public function GetMarginTop()
@@ -346,17 +358,22 @@ class EFPDF extends FPDF
     public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
     {
         if (isset($this->srcEncoding) && is_string($txt)) {
-            $txt = iconv($this->srcEncoding, 'ISO-8859-1//TRANSLIT', $txt);
+            $txt = iconv($this->srcEncoding, $this->pdfEncoding, $txt);
         }
         if (is_null($h)) {
             $h = $this->FontSize * $this->lineHeight;
         }
         $w = $this->CalcWidth($w);
         $h = $this->CalcHeight($h);
-        parent::Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
+
         if ($this->InHeader) {
             $this->headerLimit = max($this->headerLimit, $this->y + $h);
         }
+        if ($this->InFooter) {
+            $this->footerLimit = min($this->footerLimit, $this->y);
+        }
+
+        parent::Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
     }
     /**
      * @deprecated 1.0.2 This method is deprecated in favor of SetSourceEncoding
@@ -364,7 +381,7 @@ class EFPDF extends FPDF
     public function CellUTF8($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
     {
         if (!isset($this->srcEncoding) && is_string($txt)) {
-            $txt = iconv('UTF-8','ISO-8859-1//TRANSLIT', $txt);
+            $txt = iconv('UTF-8', $this->pdfEncoding, $txt);
         }
         $this->Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
     }
@@ -410,7 +427,7 @@ class EFPDF extends FPDF
     public function MultiCellUTF8($w, $h, $txt, $border = 0, $align = 'J', $fill = false)
     {
         if (!isset($this->srcEncoding) && is_string($txt)) {
-            $txt = iconv('UTF-8','ISO-8859-1//TRANSLIT', $txt);
+            $txt = iconv('UTF-8', $this->pdfEncoding, $txt);
         }
         $this->MultiCell($w, $h, $txt, $border, $align, $fill);
     }

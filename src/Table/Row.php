@@ -150,7 +150,7 @@ class Row
                 $lastCell->GetRight()
             );
         } else {
-            $bottom = $this->pdf->GetBottom();
+            $bottom = $this->pdf->GetFooterTop();
             foreach ($this->cellsMeta as $c) {
                 $this->DrawLeftLine(
                     $this->startPage,
@@ -165,14 +165,21 @@ class Row
                 $bottom,
                 $lastCell->GetRight()
             );
+            $this->DrawBottomLine($this->startPage, $firstCell->GetLeft(), $lastCell->GetRight(), $bottom);
+
             for ($p = $this->startPage + 1; $p < $this->endPage; $p++) {
                 $top = $this->pdf->GetHeaderBottom();
                 foreach ($this->cellsMeta as $c) {
                     $this->DrawLeftLine($p, $top, $bottom, $c->GetLeft());
                 }
                 $this->DrawRightLine($p, $top, $bottom, $lastCell->GetRight());
+                $this->DrawTopLine($p, $firstCell->GetLeft(), $lastCell->GetRight(), $top);
+                $this->DrawBottomLine($p, $firstCell->GetLeft(), $lastCell->GetRight(), $bottom);
             }
+
+            $this->pdf->SetPage($this->endPage);
             $top = $this->pdf->GetHeaderBottom();
+            $this->DrawTopLine($this->endPage, $firstCell->GetLeft(), $lastCell->GetRight(), $top);
             foreach ($this->cellsMeta as $c) {
                 $this->DrawLeftLine($this->endPage, $top, $this->bottom, $c->GetLeft());
             }
