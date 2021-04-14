@@ -65,7 +65,10 @@ class EFPDF extends FPDF
     public function SetFooter(?callable $footerFunc, $footerHeight = null)
     {
         $this->footerFunc = $footerFunc;
-        $this->footerHeight = $this->bMargin = $footerHeight;
+        $this->footerHeight = $footerHeight;
+        if (isset($footerHeight)) {
+            $this->bMargin = $footerHeight;
+        }
     }
 
     public function Header()
