@@ -1,6 +1,6 @@
 <?php
 
-namespace Francerz\EFPDF\Barcode;
+namespace Francerz\ExFPDF\Barcode;
 
 class Code39
 {

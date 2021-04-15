@@ -1,8 +1,8 @@
 <?php
 
-namespace Francerz\EFPDF\Table;
+namespace Francerz\ExFPDF\Table;
 
-use Francerz\EFPDF\EFPDF;
+use Francerz\ExFPDF\ExFPDF;
 use Iterator;
 use phpDocumentor\Reflection\Types\This;
 
@@ -24,7 +24,7 @@ class Row
     private $cellsMeta = [];
     private $x;
 
-    public function __construct(EFPDF $pdf, Table $table)
+    public function __construct(ExFPDF $pdf, Table $table)
     {
         $this->pdf = $pdf;
         $this->table = $table;

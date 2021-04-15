@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>EFPDF samples</title>
+    <title>ExFPDF samples</title>
 </head>
 <body>
     <ul>

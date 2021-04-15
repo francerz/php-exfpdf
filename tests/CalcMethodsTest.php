@@ -1,13 +1,13 @@
 <?php
 
-use Francerz\EFPDF\EFPDF;
+use Francerz\ExFPDF\ExFPDF;
 use PHPUnit\Framework\TestCase;
 
 class CalcMethodsTest extends TestCase
 {
     public function testPdfInstance()
     {
-        $pdf = new EFPDF('P', 'mm', [100, 100]);
+        $pdf = new ExFPDF('P', 'mm', [100, 100]);
         $pdf->SetMargins(10, 10, 10);
         $pdf->SetAutoPageBreak(false, 10);
 
@@ -19,7 +19,7 @@ class CalcMethodsTest extends TestCase
     /**
      * @depends testPdfInstance
      */
-    public function testCalcXMethod(EFPDF $pdf)
+    public function testCalcXMethod(ExFPDF $pdf)
     {
 
         // Checks if starting position is 0
@@ -64,7 +64,7 @@ class CalcMethodsTest extends TestCase
     /**
      * @depends testPdfInstance
      */
-    public function testCalcYMethod(EFPDF $pdf)
+    public function testCalcYMethod(ExFPDF $pdf)
     {
 
         // Checks if starting position is 0
@@ -109,7 +109,7 @@ class CalcMethodsTest extends TestCase
     /**
      * @depends testPdfInstance
      */
-    public function testCalcWidthMethod(EFPDF $pdf)
+    public function testCalcWidthMethod(ExFPDF $pdf)
     {
         $this->assertEquals(10, $pdf->CalcWidth(10));
         $this->assertEquals(90, $pdf->CalcWidth(90));
@@ -124,7 +124,7 @@ class CalcMethodsTest extends TestCase
     /**
      * @depends testPdfInstance
      */
-    public function testCalcHeightMethod(EFPDF $pdf)
+    public function testCalcHeightMethod(ExFPDF $pdf)
     {
         $this->assertEquals(10, $pdf->CalcHeight(10));
         $this->assertEquals(90, $pdf->CalcHeight(90));

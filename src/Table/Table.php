@@ -1,9 +1,9 @@
 <?php
 
-namespace Francerz\EFPDF\Table;
+namespace Francerz\ExFPDF\Table;
 
 use Exception;
-use Francerz\EFPDF\EFPDF;
+use Francerz\ExFPDF\ExFPDF;
 
 class Table
 {
@@ -15,7 +15,7 @@ class Table
 
     private $rows = [];
 
-    public function __construct(EFPDF $pdf, array $widths)
+    public function __construct(ExFPDF $pdf, array $widths)
     {
         $this->pdf = $pdf;
         $this->SetColumnWidths($widths);

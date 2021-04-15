@@ -3,9 +3,9 @@ define('ROOT_PATH', dirname(__DIR__));
 
 require ROOT_PATH.'/vendor/autoload.php';
 
-use Francerz\EFPDF\EFPDF;
+use Francerz\ExFPDF\ExFPDF;
 
-$pdf = new EFPDF();
+$pdf = new ExFPDF();
 $pdf->AddPage();
 $pdf->SetFont('Arial', '', 12);
 

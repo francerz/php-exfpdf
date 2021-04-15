@@ -1,10 +1,10 @@
 {
-    "name": "francerz/efpdf",
+    "name": "francerz/exfpdf",
     "description": "Free PDF extension library",
     "keywords": ["PDF","PSR-7","Http-Message","Barcode"],
     "autoload": {
         "psr-4":{
-            "Francerz\\EFPDF\\": "src"
+            "Francerz\\ExFPDF\\": "src"
         }
     },
     "scripts": {

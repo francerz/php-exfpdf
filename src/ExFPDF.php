@@ -1,15 +1,15 @@
 <?php
-namespace Francerz\EFPDF;
+namespace Francerz\ExFPDF;
 
 use FPDF;
-use Francerz\EFPDF\Barcode\Code128;
-use Francerz\EFPDF\Barcode\Code39;
-use Francerz\EFPDF\Table\Table;
+use Francerz\ExFPDF\Barcode\Code128;
+use Francerz\ExFPDF\Barcode\Code39;
+use Francerz\ExFPDF\Table\Table;
 use Francerz\Http\Utils\HttpFactoryManager;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
-class EFPDF extends FPDF
+class ExFPDF extends FPDF
 {
     const WIDTH_FILL = 0;
 
@@ -528,7 +528,7 @@ class EFPDF extends FPDF
      * @param string $code
      * @return void
      */
-    public function Barcode128(string $code, $w, $h, $x = '0+', $y = '0+', $ln = EFPDF::LN_RIGHT)
+    public function Barcode128(string $code, $w, $h, $x = '0+', $y = '0+', $ln = ExFPDF::LN_RIGHT)
     {
         if (!array_key_exists('code128', $this->barcoders)) {
             $this->barcoders['code128'] = new Code128($this);
@@ -543,7 +543,7 @@ class EFPDF extends FPDF
         $this->lnHandling($ln, $x, $y, $w, $h);
     }
 
-    public function Barcode39(string $code, $w, $h, $x = '0+', $y = '0+', $ln = EFPDF::LN_RIGHT)
+    public function Barcode39(string $code, $w, $h, $x = '0+', $y = '0+', $ln = ExFPDF::LN_RIGHT)
     {
         if (!array_key_exists('code39', $this->barcoders)) {
             $this->barcoders['code39'] = new Code39($this);

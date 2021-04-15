@@ -1,8 +1,8 @@
-EFPDF (Extended Free PDF)
+ExFPDF (Extended Free PDF)
 =======================================
 
-[![Packagist](https://img.shields.io/packagist/vpre/francerz/efpdf)](https://packagist.org/packages/francerz/efpdf)
-[![Build Status](https://github.com/francerz/efpdf/workflows/PHP%20Composer/badge.svg?branch=master)](https://github.com/francerz/EFPDF/actions?query=workflow%3A%22PHP+Composer%22+branch%3Amaster)
+[![Packagist](https://img.shields.io/packagist/vpre/francerz/ExFPDF)](https://packagist.org/packages/francerz/ExFPDF)
+[![Build Status](https://github.com/francerz/ExFPDF/workflows/PHP%20Composer/badge.svg?branch=master)](https://github.com/francerz/ExFPDF/actions?query=workflow%3A%22PHP+Composer%22+branch%3Amaster)
 
 This library extends basic functionality of the FPDF class.
 
@@ -13,13 +13,13 @@ to suit your needs.
 Installation
 ---------------------------------------
 
-The easiest and optimal way to install EFPDF is by using [Composer](https://getcomposer.org).
+The easiest and optimal way to install ExFPDF is by using [Composer](https://getcomposer.org).
 
 If you already using Composer, just run the next command and will be fully
 installed.
 
 ```bash
-composer require francerz/EFPDF
+composer require francerz/ExFPDF
 ```
 
 Extended functionality
@@ -27,7 +27,7 @@ Extended functionality
 
 ### Output result as PSR-7 ResponseInterface
 
-The EFPDF allows to output resultant PDF to PSR-7 compliant ResponseInterface
+The ExFPDF allows to output resultant PDF to PSR-7 compliant ResponseInterface
 object. Relies on PSR-17 Http Factories to create the instances.
 
 ```php
@@ -42,7 +42,7 @@ OutputPsr7(
 
 Usage example
 ```php
-$pdf = new EFPDF();
+$pdf = new ExFPDF();
 // ... create PDF
 
 // ... load HTTP Factories
@@ -69,7 +69,7 @@ OutputPsr7WithManager(
 
 Usage example
 ```php
-$pdf = new EFPDF();
+$pdf = new ExFPDF();
 // ... create PDF
 
 // Output PSR-7 Response object
@@ -84,7 +84,7 @@ library [francerz/http](https://packagist.org/packages/francerz/http) wich
 is PSR-7, PSR-17 and PSR-18 compliant.
 
 ```php
-$pdf = new EFPDF();
+$pdf = new ExFPDF();
 // ... create PDF
 
 // Output PSR-7 Response object
@@ -237,14 +237,14 @@ Allows to define Header and Footer using anonymous functions.
 ```php
 $userName = "My Name";
 
-$pdf = new EFPDF();
+$pdf = new ExFPDF();
 $pdf->AliasNbPages();
 $pdf->SetFont('Arial', '', 12);
-$pdf->SetHeader(function(EFPDF $efpdf) use ($userName) {
-    $efpdf->Cell('~100%', 10, "Hello {$userName}", 1);
+$pdf->SetHeader(function(ExFPDF $exfpdf) use ($userName) {
+    $exfpdf->Cell('~100%', 10, "Hello {$userName}", 1);
 });
-$pdf->SetFooter(function(EFPDF $efpdf) {
-    $efpdf->Cell('~100%', 10, 'Page '.$efpdf->PageNo(), 1, 0, 'R');
+$pdf->SetFooter(function(ExFPDF $exfpdf) {
+    $exfpdf->Cell('~100%', 10, 'Page '.$exfpdf->PageNo(), 1, 0, 'R');
 });
 $pdf->AddPage();
 
@@ -259,7 +259,7 @@ Table PDF creation is simplified and with automatic overflowing when
 cells overflows in multiple pages.
 
 ```php
-$pdf = new EFPDF();
+$pdf = new ExFPDF();
 $pdf->AddPage();
 $pdf->SetFont('Arial', '', 12);
 

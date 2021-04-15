@@ -1,6 +1,6 @@
 <?php
 
-namespace Francerz\EFPDF\Table;
+namespace Francerz\ExFPDF\Table;
 
 class CellMeta
 {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3ef55122e1bc835f8bfc6324cff6e195",
+    "content-hash": "a907af2b3a2ebf61512f800e4b770516",
     "packages": [
         {
             "name": "francerz/http-utils",
