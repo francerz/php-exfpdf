@@ -489,6 +489,15 @@ class EFPDF extends FPDF
         parent::Rect($x, $y, $w, $h, $style);
     }
 
+    public function Ln($h = null)
+    {
+        $h = $this->CalcHeight($h);
+        if ($this->InHeader) {
+            $this->headerLimit = max($this->headerLimit, $this->y + $h);
+        }
+        parent::Ln($h);
+    }
+
     #region Barcode
     protected $barcoders = [];
 
