@@ -50,12 +50,15 @@ $pdf->Cell(0, 10, '', ExFPDF::BORDER_ALL);
 $pdf->Barcode128('17194608071620010020082321509', 70, 8, $pdf->CalcX('~50%')-39, $pdf->CalcY('~50%')-4);
 $pdf->Barcode39('17194608071620010020082321509', 70, 8, $pdf->CalcX('~50%')-39, $pdf->CalcY('~50%')+8);
 
+$alpha = "A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ\n";
+$pdf->SetY('85%');
+$pdf->MultiCell('~100%', null, $alpha.$alpha.$alpha.$alpha, 1);
+
 $pdf->AddPage();
 $pdf->SetY('~20%');
 
 $table = $pdf->CreateTable(['~20%','~20%','~30%','~10%','~20%']);
 $row = $table->AddRow();
-$alpha = "A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ\n";
 $row->Cell("A B C D E F G H I J K L M N O P Q R S T U V W X Y Z", 'C', false, 2);
 $row = $table->AddRow();
 $row->Cell($alpha);

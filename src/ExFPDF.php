@@ -48,6 +48,8 @@ class ExFPDF extends FPDF
     private $pdfEncoding = 'ISO-8859-1//TRANSLIT';
     private $lineHeight = 1.0;
 
+    private $closeMulticell = true;
+
     private $xyPins = array();
 
     public function __construct($orientation='P', $unit='mm', $size='A4')
@@ -449,7 +451,41 @@ class ExFPDF extends FPDF
         }
         $w = $this->CalcWidth($w);
         $h = $this->CalcHeight($h);
+
+        $startPage = $this->page;
+        $startX = $this->x;
+        $startY = $this->y;
         parent::MultiCell($w, $h, $txt, $border, $align, $fill);
+        $endPage = $this->page;
+        $endX = $this->x + $w;
+        $endY = $this->y;
+        
+        if ($startPage != $endPage) {
+            $border = $border == 1 ? 'TLBR' : $border;
+            // has top
+            if (strpos($border, 'T') !== false) {
+                for ($p = $startPage + 1; $p <= $endPage; $p++) {
+                    $this->SetPage($p);
+                    $y = $this->GetHeaderBottom();
+                    $this->Line($startX, $y, $endX, $y);
+                }
+            }
+            // has bottom
+            if (strpos($border, 'B') !== false) {
+                $this->SetPage($startPage);
+                $y = floor(($this->GetFooterTop() - $startY) / $h) * $h + $startY;
+                $this->Line($startX, $y, $endX, $y);
+
+                for ($p = $startPage+1; $p < $endPage; $p++) {
+                    $this->SetPage($p);
+                    $y = $this->GetHeaderBottom();
+                    $y = floor(($this->GetFooterTop() - $y) / $h) * $h + $y;
+                    $this->Line($startX, $y, $endX, $y);
+                }
+            }
+            $this->SetPage($endPage);
+            $this->SetY($endY);
+        }
     }
     /**
      * @deprecated 1.0.2 This method is deprecated in favor of SetSourceEncoding
