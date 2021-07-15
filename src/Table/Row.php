@@ -69,7 +69,7 @@ class Row
         }
 
         $this->pdf->SetPage($this->endPage);
-        $this->pdf->SetY($this->bottom);
+        $this->pdf->SetXY($this->startX, $this->bottom);
     }
 
     public function CellSpan($fill=false, $colspan=1)
