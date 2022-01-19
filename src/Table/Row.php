@@ -72,7 +72,7 @@ class Row
         $this->pdf->SetXY($this->startX, $this->bottom);
     }
 
-    public function CellSpan($fill=false, $colspan=1)
+    public function CellSpan($fill = false, $colspan = 1)
     {
         $this->Cell('', 'J', $fill, $colspan);
     }
@@ -81,6 +81,7 @@ class Row
     {
         $bottom = $this->bottom + $height;
         $this->bottom = $bottom > $this->bottom ? $bottom : $this->bottom;
+        $this->pdf->SetXY($this->startX, $this->bottom);
     }
 
     private function DrawTopLine($page, $x1, $x2, $y)
