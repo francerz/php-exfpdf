@@ -14,7 +14,7 @@ class Row
     private $drawed = false;
     private $isFirst = false;
     private $isLast = false;
-    
+
     private $startPage;
     private $endPage;
     private $startY;
@@ -43,7 +43,7 @@ class Row
         $this->isLast = $last;
     }
 
-    public function Cell($txt, $align='J', $fill=false, $colspan=1, $rowspan=1)
+    public function Cell($txt, $align = 'J', $fill = false, $colspan = 1, $rowspan = 1)
     {
         // Sets starting point
         $this->pdf->SetPage($this->startPage);
@@ -75,6 +75,12 @@ class Row
     public function CellSpan($fill=false, $colspan=1)
     {
         $this->Cell('', 'J', $fill, $colspan);
+    }
+
+    public function Ln($height)
+    {
+        $bottom = $this->bottom + $height;
+        $this->bottom = $bottom > $this->bottom ? $bottom : $this->bottom;
     }
 
     private function DrawTopLine($page, $x1, $x2, $y)
