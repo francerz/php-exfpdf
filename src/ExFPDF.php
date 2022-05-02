@@ -1,6 +1,7 @@
 <?php
 namespace Francerz\ExFPDF;
 
+use Com\Tecnick\Barcode\Barcode;
 use FPDF;
 use Francerz\ExFPDF\Barcode\Code128;
 use Francerz\ExFPDF\Barcode\Code39;
@@ -638,8 +639,53 @@ class ExFPDF extends FPDF
 
     protected function _beginpage($orientation, $size, $rotation)
     {
-        $page = array_key_exists($this->page+1, $this->pages) ? $this->pages[$this->page+1] : '';
+        $page = array_key_exists($this->page + 1, $this->pages) ? $this->pages[$this->page + 1] : '';
         parent::_beginpage($orientation, $size, $rotation);
         $this->pages[$this->page] = $page;
+    }
+
+    public function GetQrCodeMatrix($data, $level = 'H')
+    {
+        $barcode = new Barcode();
+        $qr = $barcode->getBarcodeObj("QRCODE,{$level}", $data);
+        return $qr->getGridArray();
+    }
+
+    public function QrCode($data, $size, $level = 'H')
+    {
+        $matrix = $this->GetQrCodeMatrix($data, $level);
+        $this->DrawBinaryMatrix($matrix, $size);
+    }
+
+    public function GetDataMatrixMatrix($data)
+    {
+        $barcode = new Barcode();
+        $dm = $barcode->getBarcodeObj('DATAMATRIX', $data);
+        return $dm->GetGridArray();
+    }
+
+    public function DataMatrix($data, $size)
+    {
+        $matrix = $this->GetDataMatrixMatrix($data);
+        $this->DrawBinaryMatrix($matrix, $size);
+    }
+
+    public function DrawBinaryMatrix($matrix, $size)
+    {
+        $size = $this->CalcWidth($size);
+        $s = $size / count($matrix);
+        $startX = $this->GetX();
+        $startY = $this->GetY();
+        $x = $startX;
+        $y = $startY;
+        foreach ($matrix as $i => $row) {
+            foreach ($row as $j => $bit) {
+                if ($bit == 0) {
+                    continue;
+                }
+                $this->Rect($x + $j * $s, $y + $i * $s, $s, $s, 'F');
+            }
+        }
+        $this->SetX($startX + $size);
     }
 }

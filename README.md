@@ -323,3 +323,20 @@ $pdf->barcode39(string $code, $w, $h, $x, $y);
 Using the `barcode39` puts the given `$code` (`[-0-9A-Z. *$/+%]`) string at the
 given `$x` and `$y` position, with the given `$w` (width) and `$h` (height).
 This meaures are compatible with the relative positioning and sizing.
+
+### QR and DataMatrix support
+
+```php
+$pdf->QrCode(string $data, $size, $level = 'H');
+$pdf->DataMatrix(string $data, $size);
+```
+
+```php
+$matrix = $pdf->GetQrCodeMatrix(string $data, $level = 'H');
+$pdf->DrawBinaryMatrix($matrix, $size);
+```
+
+```php
+$matrix = $pdf->GetDataMatrixMatrix(string $data);
+$pdf->DrawBinaryMatrix($matrix, $size);
+```

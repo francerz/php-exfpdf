@@ -14,7 +14,9 @@
         "php": ">=5.4",
         "setasign/fpdf": "^1.8",
         "francerz/http-utils": "^0.2.19",
-        "ext-iconv": ">=5.4"
+        "ext-iconv": ">=5.4",
+        "tecnickcom/tc-lib-barcode": "^1.17",
+        "francerz/enum": "^0.1.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.5",
