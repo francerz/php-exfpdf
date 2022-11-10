@@ -46,7 +46,7 @@ class ExFPDF extends FPDF
     private $footerLimit = null;
 
     private $srcEncoding = null;
-    private $pdfEncoding = 'ISO-8859-1//TRANSLIT';
+    private $pdfEncoding = 'ISO-8859-1//IGNORE//TRANSLIT';
     private $lineHeight = 1.0;
 
     private $closeMulticell = true;
