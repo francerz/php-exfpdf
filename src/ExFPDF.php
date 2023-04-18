@@ -49,22 +49,35 @@ class ExFPDF extends FPDF
     private $pdfEncoding = 'ISO-8859-1//IGNORE//TRANSLIT';
     private $lineHeight = 1.0;
 
+    private $angle = 0;
+
     private $closeMulticell = true;
 
     private $xyPins = array();
 
-    public function __construct($orientation='P', $unit='mm', $size='A4')
+    public function __construct($orientation = 'P', $unit = 'mm', $size = 'A4')
     {
         $this->x = 0.0;
         $this->y = 0.0;
         parent::__construct($orientation, $unit, $size);
     }
 
+    /**
+     * @param callable|null $headerFunc (ExFPDF $pdf): void
+     * @param float $headerHeight
+     * @return void
+     */
     public function SetHeader(?callable $headerFunc, $headerHeight = null)
     {
         $this->headerFunc = $headerFunc;
         $this->headerHeight = $headerHeight;
     }
+
+    /**
+     * @param callable|null $footerFunc (ExFPDF $pdf): void
+     * @param [type] $footerHeight
+     * @return void
+     */
     public function SetFooter(?callable $footerFunc, $footerHeight = null)
     {
         $this->footerFunc = $footerFunc;
@@ -77,7 +90,7 @@ class ExFPDF extends FPDF
     public function BackStyles(&$family, &$style, &$fontsize, &$lw, &$dc, &$fc, &$tc, &$cf)
     {
         $family = $this->FontFamily;
-        $style = $this->FontStyle.($this->underline ? 'U' : '');
+        $style = $this->FontStyle . ($this->underline ? 'U' : '');
         $fontsize = $this->FontSizePt;
         $lw = $this->LineWidth;
         $dc = $this->DrawColor;
@@ -108,7 +121,7 @@ class ExFPDF extends FPDF
         call_user_func($this->headerFunc, $this);
         $this->RestoreStyles($family, $style, $fontsize, $lw, $dc, $fc, $tc, $cf);
     }
-    
+
     public function Footer()
     {
         if (!isset($this->footerFunc)) {
@@ -185,10 +198,10 @@ class ExFPDF extends FPDF
 
     private static function MeasurePatternMatch(
         $measure,
-        &$len=0.0,
-        &$pct=false,
-        &$rel=false,
-        &$ref=''
+        &$len = 0.0,
+        &$pct = false,
+        &$rel = false,
+        &$ref = ''
     ) {
         $match = preg_match(self::MEASURE_PATTERN, $measure, $matches);
         if (!$match) return false;
@@ -205,8 +218,8 @@ class ExFPDF extends FPDF
         float $value,
         float $current,
         float $margin,
-        bool $rel=false,
-        string $ref=''
+        bool $rel = false,
+        string $ref = ''
     ) {
         if ($ref === '+') {
             return $current + $value;
@@ -284,8 +297,8 @@ class ExFPDF extends FPDF
     public function SetPin($coordName, $x = null, $y = null)
     {
         $this->xyPins[$coordName] = array(
-            'x'=> isset($x) ? $this->CalcX($x) : $this->x,
-            'y'=> isset($y) ? $this->CalcY($y) : $this->y
+            'x' => isset($x) ? $this->CalcX($x) : $this->x,
+            'y' => isset($y) ? $this->CalcY($y) : $this->y
         );
     }
     public function GetPinX($coordName)
@@ -386,9 +399,11 @@ class ExFPDF extends FPDF
      * @param string $align Text alignment (L=Left, R=Right, C=Center, J=Justified)
      * @param boolean $fill Cell will be filled with Fill Color
      * @param string $link Hyperlink for clickable cell
+     * @param float $angle Rotation angle in degrees.
+     * @param boolean $center Indicates if box coordinates will be from top-left (false) or center-center (true).
      * @return void
      */
-    public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
+    public function Cell($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $center = false, $angle = null)
     {
         if (isset($this->srcEncoding) && is_string($txt)) {
             $txt = iconv($this->srcEncoding, $this->pdfEncoding, $txt);
@@ -405,13 +420,30 @@ class ExFPDF extends FPDF
         if ($this->InFooter) {
             $this->footerLimit = min($this->footerLimit, $this->y);
         }
-
+        $x0 = $this->x;
+        $y0 = $this->y;
+        if ($center) {
+            $this->x -= $w / 2;
+            $this->y -= $h / 2;
+        }
+        if (isset($angle)) {
+            $rX = $this->x + ($w / 2);
+            $rY = $this->y + ($h / 2);
+            $this->Rotate($angle, $rX, $rY);
+        }
         parent::Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
+        if (isset($angle)) {
+            $this->Rotate(0);
+        }
+        if ($center) {
+            $this->x = $x0;
+            $this->y = $y0;
+        }
     }
     /**
      * @deprecated 1.0.2 This method is deprecated in favor of SetSourceEncoding
      */
-    public function CellUTF8($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
+    public function CellUTF8($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '')
     {
         if (!isset($this->srcEncoding) && is_string($txt)) {
             $txt = iconv('UTF-8', $this->pdfEncoding, $txt);
@@ -419,7 +451,7 @@ class ExFPDF extends FPDF
         $this->Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
     }
 
-    public function CellRight($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $margin=0)
+    public function CellRight($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $margin = 0)
     {
         $x0 = $this->x;
         $x = $this->CalcWidth($w) * -1 - $this->rMargin - $margin;
@@ -460,7 +492,7 @@ class ExFPDF extends FPDF
         $endPage = $this->page;
         $endX = $this->x + $w;
         $endY = $this->y;
-        
+
         if ($startPage != $endPage) {
             $border = $border == 1 ? 'TLBR' : $border;
             // has top
@@ -477,7 +509,7 @@ class ExFPDF extends FPDF
                 $y = floor(($this->GetFooterTop() - $startY) / $h) * $h + $startY;
                 $this->Line($startX, $y, $endX, $y);
 
-                for ($p = $startPage+1; $p < $endPage; $p++) {
+                for ($p = $startPage + 1; $p < $endPage; $p++) {
                     $this->SetPage($p);
                     $y = $this->GetHeaderBottom();
                     $y = floor(($this->GetFooterTop() - $y) / $h) * $h + $y;
@@ -687,5 +719,52 @@ class ExFPDF extends FPDF
             }
         }
         $this->SetX($startX + $size);
+    }
+
+    /**
+     * Performs rotation around a given center.
+     *
+     * @param float $angle Angle in degrees
+     * @param float $x Abscissa of the rotation center. Default value: current position.
+     * @param float $y Ordinate of the rotation center. Default value: current position.
+     * @return void
+     *
+     * @author Olivier <olivr@fpdf.org>
+     * @license FPDF
+     * @see http://www.fpdf.org/en/script/script2.php
+     *
+     */
+    public function Rotate($angle, $x = null, $y = null)
+    {
+        $x = !isset($x) ? $this->x : $x;
+        $y = !isset($y) ? $this->y : $y;
+
+        $x = $this->CalcX($x);
+        $y = $this->CalcY($y);
+
+        if ($this->angle != 0) {
+            $this->_out('Q');
+        }
+        $this->angle = $angle;
+        if ($angle == 0) {
+            return;
+        }
+        $angle *= M_PI / 180;
+        $c = cos($angle);
+        $s = sin($angle);
+        $cx = $x * $this->k;
+        $cy = ($this->h - $y) * $this->k;
+        $this->_out(
+            sprintf('q %.5f %.5f %.5f %.5f %.2f %.2f cm 1 0 0 1 %.2f %.2f cm', $c, $s, -$s, $c, $cx, $cy, -$cx, -$cy)
+        );
+    }
+
+    protected function _endpage()
+    {
+        if (!$this->angle != 0) {
+            $this->angle = 0;
+            $this->_out('Q');
+        }
+        parent::_endpage();
     }
 }
