@@ -170,6 +170,59 @@ class ExFPDF extends FPDF
         return $this->h - $this->bMargin;
     }
 
+    private static function findVendorPath()
+    {
+        $dirname = dirname(__FILE__, 2);
+        $dirVendor = glob('vendor', GLOB_ONLYDIR);
+        if (!empty($dirVendor)) {
+            return reset($dirVendor);
+        }
+        $dirname = dirname($dirname, 2);
+        return $dirname;
+    }
+
+    private function findFontPath($fontFile)
+    {
+        $fontpath = $this->fontpath . $fontFile;
+        if (file_exists($fontpath)) {
+            return $fontpath;
+        }
+        $vendorDir = static::findVendorPath();
+        $fontsDir = strtr("{$vendorDir}/setasign/fpdf/font/", '/', DIRECTORY_SEPARATOR);
+        $fontpath = $fontsDir . $fontFile;
+        if (file_exists($fontpath)) {
+            return $fontpath;
+        }
+        return null;
+    }
+
+    protected function _loadfont($fontFile)
+    {
+        $fontpath = $this->findFontPath($fontFile);
+        if (is_null($fontpath)) {
+            $this->Error('Incorrect font definition file name: ' . $fontFile);
+        }
+        include($fontpath);
+        if (!isset($name)) {
+            $this->Error('Could not include font definition file.');
+        }
+        if (isset($enc)) {
+            $enc = strtolower($enc);
+        }
+        if (!isset($subsetted)) {
+            $subsetted = false;
+        }
+        return get_defined_vars();
+    }
+
+    public function SetFontPath($fontpath)
+    {
+        if (!file_exists($fontpath) || !is_dir($fontpath)) {
+            $this->Error('Invalid font path: ' . $fontpath);
+        }
+        $this->fontpath = strtr(rtrim($fontpath, '/\\') . '/', '/', DIRECTORY_SEPARATOR);
+    }
+
     public function AddPage($orientation = '', $size = '', $rotation = 0)
     {
         $this->headerLimit = 0;
