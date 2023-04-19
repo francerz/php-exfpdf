@@ -13,6 +13,8 @@ class Table
     private $outerBorder = 'TBLR';
     private $innerBorder = 'TBLR';
 
+    private $margins = [0.0, 0.0, 0.0, 0.0];
+
     private $rows = [];
 
     public function __construct(ExFPDF $pdf, array $widths)
@@ -28,6 +30,20 @@ class Table
             $kWidths[] = $this->pdf->CalcWidth($w);
         }
         $this->widths = $kWidths;
+    }
+
+    public function SetCellMargins($left, $top = null, $right = null, $bottom = null)
+    {
+        $margins = [$left];
+        $margins[] = $top ?? $left;
+        $margins[] = $right ?? $left;
+        $margins[] = $bottom ?? $top ?? $left;
+        $this->margins = $margins;
+    }
+
+    public function GetCellMargins()
+    {
+        return $this->margins;
     }
 
     public function SetOuterBorder(string $border = 'TBLR')

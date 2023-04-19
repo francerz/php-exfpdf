@@ -52,17 +52,21 @@ class Row
         // Calcs width and border stops
         $w = $this->table->GetCellWidth($this->cell, $colspan);
         $this->cellsMeta[] = new CellMeta($this->x, $this->startY, $w);
+
+        // Draws the cell
+        [$cl, $ct, $cr, $cb] = $this->table->GetCellMargins();
+        $this->pdf->SetXY("{$cl}+", "{$ct}+");
+        $this->pdf->MultiCell($w - ($cl + $cr), null, $txt, 0, $align, $fill);
+
+        // Updates row counters
         $this->x += $w;
         $this->cell += $colspan;
-        
-        // Draws the cell
-        $this->pdf->MultiCell($w, null, $txt, 0, $align, $fill);
 
         // Updates bottom and endPage
         $page = $this->pdf->GetPage();
-        $bottom = $this->pdf->GetY();
+        $bottom = $this->pdf->GetY() + $cb;
         if ($page == $this->endPage) {
-            $this->bottom = $bottom > $this->bottom ? $bottom : $this->bottom;
+            $this->bottom = max($bottom, $this->bottom);
         } elseif ($page > $this->endPage) {
             $this->bottom = $bottom;
             $this->endPage = $page;
@@ -98,7 +102,7 @@ class Row
         $border = $this->isLast ?
             $this->table->GetOuterBorder() :
             $this->table->GetInnerBorder();
-        if (stripos($border,'B') !== false) {
+        if (stripos($border, 'B') !== false) {
             $this->pdf->SetPage($page);
             $this->pdf->Line($x1, $y, $x2, $y);
         }
@@ -140,7 +144,7 @@ class Row
             $lastCell->GetRight(),
             $this->bottom
         );
-        
+
         if ($this->startPage == $this->endPage) {
             foreach ($this->cellsMeta as $c) {
                 $this->DrawLeftLine(

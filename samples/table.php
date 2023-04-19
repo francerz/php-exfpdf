@@ -28,6 +28,7 @@ $row->Cell('Quantity', $align='C', $fill=true);
 // Creates another row
 $pdf->SetFont('', '', 12);
 $pdf->SetTextColor('#000');
+$table->SetCellMargins(3, 1);
 $row = $table->AddRow();
 $row->Cell('$ 340.00', $align='R');
 $row->Cell('Gymbal');

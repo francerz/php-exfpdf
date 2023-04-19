@@ -1,4 +1,5 @@
 <?php
+
 namespace Francerz\ExFPDF;
 
 use Com\Tecnick\Barcode\Barcode;
@@ -245,6 +246,11 @@ class ExFPDF extends FPDF
     public function SetFontStyle($style)
     {
         $this->setFont($this->FontFamily, $style, $this->FontSizePt);
+    }
+
+    public function GetFillColor()
+    {
+        return $this->FillColor;
     }
 
     const MEASURE_PATTERN = '/^(~?)([-+]?\\d+(?:\\.\\d+)?)(%?)([-+]?)$/';
