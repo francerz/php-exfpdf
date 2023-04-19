@@ -20,7 +20,7 @@ $pdf->SetHeader(function (ExFPDF $exfpdf) use ($userName) {
     $exfpdf->SetFontSize(72);
     $exfpdf->SetTextColor('#cccccc');
     $exfpdf->SetXY('50%', '50%');
-    $exfpdf->Cell('~100%', 10, 'Document Watermark', 0, 0, 'C', false, '', $center = true, $angle = 60);
+    $exfpdf->Cell(300, 30, 'Document Watermark', 0, 0, 'C', false, '', 60, true);
 }, 10);
 $pdf->SetFooter(function (ExFPDF $exfpdf) {
     $exfpdf->SetTextColor('#FF0000');

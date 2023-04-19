@@ -400,10 +400,10 @@ class ExFPDF extends FPDF
      * @param boolean $fill Cell will be filled with Fill Color
      * @param string $link Hyperlink for clickable cell
      * @param float $angle Rotation angle in degrees.
-     * @param boolean $center Indicates if box coordinates will be from top-left (false) or center-center (true).
+     * @param boolean $center Indicates if x, y coordinates will be from top-left (false) or center-center (true).
      * @return void
      */
-    public function Cell($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $center = false, $angle = null)
+    public function Cell($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $angle = null, $center = null)
     {
         if (isset($this->srcEncoding) && is_string($txt)) {
             $txt = iconv($this->srcEncoding, $this->pdfEncoding, $txt);
