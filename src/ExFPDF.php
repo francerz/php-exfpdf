@@ -323,23 +323,23 @@ class ExFPDF extends FPDF
         return $h;
     }
 
-    public function CalcX($x)
+    public function CalcX($x, $wRel = true)
     {
         $match = static::MeasurePatternMatch($x, $len, $pct, $rel, $ref);
 
         if ($match) {
             $x = static::CalcSize($len, $this->w, $this->lMargin + $this->rMargin, $rel, $pct);
-            $x = static::CalcRelativeMeasure($x, $this->x, $this->lMargin, $rel, $ref);
+            $x = static::CalcRelativeMeasure($x, $this->x, $this->lMargin, $rel && $wRel, $ref);
         }
         return $x;
     }
 
-    public function CalcY($y)
+    public function CalcY($y, $wRel = true)
     {
         $match = static::MeasurePatternMatch($y, $len, $pct, $rel, $ref);
         if ($match) {
             $y = static::CalcSize($len, $this->h, $this->tMargin + $this->bMargin, $rel, $pct);
-            $y = static::CalcRelativeMeasure($y, $this->y, $this->tMargin, $rel, $ref);
+            $y = static::CalcRelativeMeasure($y, $this->y, $this->tMargin, $rel && $wRel, $ref);
         }
         return $y;
     }
@@ -378,11 +378,11 @@ class ExFPDF extends FPDF
     {
         $axis = strtoupper($axis);
         if ($axis == 'Y') {
-            $offsetY = $this->CalcY($offset);
+            $offsetY = $this->CalcY($offset, false);
             $offset = 0;
         } else {
-            $offset = $this->CalcX($offset);
-            $offsetY = $this->CalcY($offsetY);
+            $offset = $this->CalcX($offset, false);
+            $offsetY = $this->CalcY($offsetY, false);
         }
         if (strpos($axis, 'X') !== false) {
             $this->x = $this->GetPinX($coordName) + $offset;
