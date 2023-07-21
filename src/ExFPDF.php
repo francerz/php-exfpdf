@@ -184,6 +184,9 @@ class ExFPDF extends FPDF
 
     private function findFontPath($fontFile)
     {
+        if (file_exists($fontFile)) {
+            return $fontFile;
+        }
         $fontpath = $this->fontpath . $fontFile;
         if (file_exists($fontpath)) {
             return $fontpath;
